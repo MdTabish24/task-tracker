@@ -67,7 +67,7 @@ TimeLogEntry { id, taskId, taskTitle, startedAt, endedAt: string | null, duratio
 | `GET /tasks/:id` | – | `200 Task` |
 | `PATCH /tasks/:id` | any of `{ title, description, status }` | `200 Task` |
 | `DELETE /tasks/:id` | – | `204` (its time logs are deleted with it; stops the timer if running) |
-| `POST /tasks/suggest` | `{ input }` (natural language) | `200 { title, description }` (not saved; client then calls `POST /tasks`) |
+| `POST /tasks/suggest` | `{ input }` (natural language, max 200 chars; 10 requests/min per user) | `200 { title, description }` (not saved; client then calls `POST /tasks`) |
 
 ### Timer
 | Route | Body | Success |

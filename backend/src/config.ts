@@ -7,6 +7,7 @@ const schema = z.object({
   JWT_SECRET: z.string().min(32),
   JWT_EXPIRES_IN: z.string().regex(/^\d+[smhd]$/, "use a duration like 24h").default("24h"),
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  AI_MODEL: z.string().min(1).default("claude-haiku-4-5-20251001"),
   CORS_ORIGINS: z.string().transform((list) => list.split(",").map((origin) => origin.trim())),
 });
 

@@ -1,6 +1,7 @@
 export type User = { id: string; name: string; email: string }
 export type Task = { id: string; title: string; description: string; status: 'todo' | 'in_progress' | 'done'; createdAt: string; updatedAt: string }
 export type TimeLog = { id: string; taskId: string; startedAt: string; endedAt: string | null }
+export type TimeLogEntry = TimeLog & { taskTitle: string; durationSeconds: number }
 export type Summary = { totalSeconds: number; tasks: { taskId: string; title: string; seconds: number }[] }
 
 export class ApiError extends Error {

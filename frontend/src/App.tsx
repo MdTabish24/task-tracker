@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { BarChart3, Check, CheckSquare, Clock3, LogOut, Pencil, Plus, Sparkles, Trash2, X } from 'lucide-react'
-import { ApiError, json, request, type Summary, type Task, type TimeLog, type User } from './api'
+import { ApiError, json, request, type Summary, type Task, type TimeLog, type TimeLogEntry, type User } from './api'
 
 type Session = { token: string; user: User }
 type View = 'tasks' | 'logs' | 'summary'
@@ -131,9 +131,27 @@ function SummaryView({ summary, tasks, date, setDate }: { summary: Summary | nul
   </section>
 }
 
-function Logs({ summary, date, setDate }: { summary: Summary | null; date: string; setDate: (date: string) => void }) {
+function Logs({ date, setDate, list }: { date: string; setDate: (date: string) => void; list: (offset: number) => Promise<TimeLogEntry[]> }) {
+  const [logs, setLogs] = useState<TimeLogEntry[]>([])
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+  const [error, setError] = useState('')
+  useEffect(() => {
+    let current = true
+    setLogs([]); setLoading(true); setError('')
+    void list(0).then(rows => { if (current) { setLogs(rows); setHasMore(rows.length === 20) } }).catch(cause => { if (current) setError(cause.message) }).finally(() => { if (current) setLoading(false) })
+    return () => { current = false }
+  }, [list])
+  async function more() {
+    setLoading(true); setError('')
+    try { const rows = await list(logs.length); setLogs([...logs, ...rows]); setHasMore(rows.length === 20) }
+    catch (cause) { setError((cause as Error).message) }
+    finally { setLoading(false) }
+  }
   return <section><div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div><h1 className="text-2xl font-bold">Time Logs</h1><p className="mt-1 text-sm text-muted">Review where your time went.</p></div><input type="date" className="field w-auto" value={date} onChange={event => setDate(event.target.value)} aria-label="Log date" /></div>
-    <div className="card overflow-x-auto p-3"><table className="w-full text-left text-sm"><thead className="text-muted"><tr>{['Task', 'Date', 'Total time'].map(label => <th className="px-4 py-4 font-semibold" key={label}>{label}</th>)}</tr></thead><tbody>{summary?.tasks.length ? summary.tasks.map(item => <tr className="border-t border-white/70" key={item.taskId}><td className="px-4 py-4 font-medium">{item.title}</td><td className="px-4 py-4 text-muted">{new Date(`${date}T12:00:00`).toLocaleDateString()}</td><td className="px-4 py-4 font-mono text-muted">{seconds(item.seconds)}</td></tr>) : <tr><td colSpan={3} className="px-4 py-10 text-center text-muted">No time tracked on this day.</td></tr>}</tbody></table></div>
+    <div className="card overflow-x-auto p-3"><table className="w-full min-w-[620px] text-left text-sm"><thead className="text-muted"><tr>{['Task', 'Date', 'Start', 'End', 'Total time'].map(label => <th className="px-4 py-4 font-semibold" key={label}>{label}</th>)}</tr></thead><tbody>{logs.length ? logs.map(log => { const start = new Date(log.startedAt); return <tr className="border-t border-white/70" key={log.id}><td className="px-4 py-4 font-medium">{log.taskTitle}</td><td className="px-4 py-4 text-muted">{start.toLocaleDateString()}</td><td className="px-4 py-4 text-muted">{start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td><td className="px-4 py-4 text-muted">{log.endedAt ? new Date(log.endedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Running'}</td><td className="px-4 py-4 font-mono text-muted">{seconds(log.durationSeconds)}</td></tr> }) : <tr><td colSpan={5} className="px-4 py-10 text-center text-muted">{loading ? 'Loading…' : 'No time logs for this day.'}</td></tr>}</tbody></table></div>
+    {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
+    {hasMore && <button type="button" className="button mt-5" disabled={loading} onClick={more}>{loading ? 'Loading…' : 'Load more'}</button>}
   </section>
 }
 
@@ -149,14 +167,17 @@ export default function App() {
   const [error, setError] = useState('')
   const token = session?.token
   const logout = useCallback(() => { localStorage.removeItem('tracker-session'); setSession(null); setTasks([]); setActive(null) }, [])
-  const call = useCallback(<T,>(path: string, options?: RequestInit) => request<T>(path, token, options), [token])
+  const call = useCallback(async <T,>(path: string, options?: RequestInit) => {
+    try { return await request<T>(path, token, options) }
+    catch (cause) { if (cause instanceof ApiError && cause.status === 401) logout(); throw cause }
+  }, [token, logout])
   const load = useCallback(async () => {
     if (!token) return
     try {
       const [user, taskList, timer] = await Promise.all([call<User>('/auth/me'), call<Task[]>('/tasks'), call<{ timeLog: TimeLog | null; now: string }>('/timer/active')])
       setSession({ token, user }); setTasks(taskList); setActive(timer.timeLog); setTick(Date.now()); setServerOffset(new Date(timer.now).getTime() - Date.now()); setError('')
-    } catch (cause) { if (cause instanceof ApiError && cause.status === 401) logout(); else setError((cause as Error).message) }
-  }, [token, call, logout])
+    } catch (cause) { if (!(cause instanceof ApiError && cause.status === 401)) setError((cause as Error).message) }
+  }, [token, call])
   useEffect(() => { void load() }, [load])
   useEffect(() => { if (!active) return; const id = window.setInterval(() => setTick(Date.now()), 1000); return () => clearInterval(id) }, [active])
   useEffect(() => {
@@ -166,6 +187,10 @@ export default function App() {
     void call<Summary>(`/summary?${query}`).then(setSummary).catch(cause => setError(cause.message))
   }, [token, date, call, active])
   const refresh = async () => { await load(); const { from, to } = localDay(new Date(`${date}T12:00:00`)); await call<Summary>(`/summary?${new URLSearchParams({ from, to })}`).then(setSummary) }
+  const listLogs = useCallback((offset: number) => {
+    const { from, to } = localDay(new Date(`${date}T12:00:00`))
+    return call<TimeLogEntry[]>(`/time-logs?${new URLSearchParams({ from, to, limit: '20', offset: String(offset) })}`)
+  }, [date, call])
   const action = async (work: () => Promise<unknown>) => { try { setError(''); await work(); await refresh() } catch (cause) { setError((cause as Error).message) } }
   const elapsed = active ? (tick + serverOffset - new Date(active.startedAt).getTime()) / 1000 : 0
   if (!session) return <Auth onSuccess={value => { localStorage.setItem('tracker-session', JSON.stringify(value)); setSession(value) }} />
@@ -174,7 +199,7 @@ export default function App() {
     <div className="flex flex-col md:min-h-[680px] md:flex-row"><nav aria-label="Main navigation" className="flex gap-1 border-b border-white/60 p-3 md:w-52 md:shrink-0 md:flex-col md:border-b-0 md:border-r md:p-5">{([['tasks', CheckSquare, 'Tasks'], ['logs', Clock3, 'Time Logs'], ['summary', BarChart3, 'Summary']] as const).map(([key, Icon, label]) => <button key={key} onClick={() => setView(key)} className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold md:flex-none md:justify-start ${view === key ? 'bg-accent text-white shadow-raised' : 'text-muted hover:text-ink'}`}><Icon size={17} />{label}</button>)}</nav>
       <main className="min-w-0 flex-1 p-5 sm:p-8 lg:p-10">{error && <div role="alert" className="mb-5 flex items-center justify-between rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}<button onClick={() => setError('')} aria-label="Dismiss error"><X size={16} /></button></div>}
         {view === 'tasks' && <Tasks tasks={tasks} active={active} elapsed={elapsed} create={async (title, description) => { await call('/tasks', json('POST', { title, description })); await refresh() }} update={async (task, values) => { await call(`/tasks/${task.id}`, json('PATCH', values)); await refresh() }} remove={task => action(() => call(`/tasks/${task.id}`, { method: 'DELETE' }))} start={task => action(() => call(`/tasks/${task.id}/timer/start`, { method: 'POST' }))} stop={() => action(() => call('/timer/stop', { method: 'POST' }))} suggest={input => call('/tasks/suggest', json('POST', { input }))} />}
-        {view === 'logs' && <Logs summary={summary} date={date} setDate={setDate} />}
+        {view === 'logs' && <Logs date={date} setDate={setDate} list={listLogs} />}
         {view === 'summary' && <SummaryView summary={summary} tasks={tasks} date={date} setDate={setDate} />}
       </main>
     </div>

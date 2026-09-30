@@ -17,7 +17,7 @@ export const updateTaskSchema = z
   .partial()
   .refine((patch) => Object.keys(patch).length > 0, "At least one field is required");
 
-export const suggestTaskSchema = z.object({ input: z.string().trim().min(1).max(500) });
+export const suggestTaskSchema = z.object({ input: z.string().trim().min(1).max(200) });
 
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;

@@ -48,3 +48,24 @@ describe("task suggestions", () => {
     expect((await api().post("/api/tasks/suggest").set(auth).send({ input: "  " })).status).toBe(400);
   });
 });
+
+describe("suggestion rate limit", () => {
+  it("allows 10 requests per minute per user, then 429", async () => {
+    const { auth } = await signup();
+    const statuses: number[] = [];
+    for (let i = 0; i < 11; i++) {
+      statuses.push((await api().post("/api/tasks/suggest").set(auth).send({ input: "" })).status);
+    }
+    expect(statuses.slice(0, 10)).toEqual(Array(10).fill(400));
+    expect(statuses[10]).toBe(429);
+
+    const other = await signup("other@example.com");
+    expect((await api().post("/api/tasks/suggest").set(other.auth).send({ input: "" })).status).toBe(400);
+  });
+
+  it("caps the input at 200 characters", async () => {
+    const { auth } = await signup();
+    const res = await api().post("/api/tasks/suggest").set(auth).send({ input: "x".repeat(201) });
+    expect(res.status).toBe(400);
+  });
+});

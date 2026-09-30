@@ -16,10 +16,10 @@ export async function suggest(input: string) {
   if (!client) throw new AppError(503, "AI suggestions are not configured");
   try {
     const response = await client.messages.parse({
-      model: "claude-opus-5-5",
+      model: config.AI_MODEL,
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      output_config: { effort: "low", format: zodOutputFormat(suggestionSchema) },
+      output_config: { format: zodOutputFormat(suggestionSchema) },
       messages: [{ role: "user", content: input }],
     });
     if (response.parsed_output) return response.parsed_output;
