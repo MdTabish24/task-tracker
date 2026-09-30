@@ -10,7 +10,7 @@ Each step is one commit.
 - [x] 2. Postgres connection + SQL migrations (users, tasks, time_logs) + migrate runner + seed script
 - [x] 3. Central error handler (`AppError`) + Zod validation middleware
 - [x] 4. Auth: signup, login, `me`, JWT middleware, rate limiting, helmet, CORS allowlist
-- [ ] 5. Tasks: create, list, get, update, delete (user-scoped)
+- [x] 5. Tasks: create, list, get, update, delete (user-scoped)
 - [ ] 6. Timer: start, stop, active (one per user)
 - [ ] 7. Daily summary
 - [ ] 8. AI task suggestion endpoint
