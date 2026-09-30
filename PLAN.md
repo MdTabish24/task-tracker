@@ -23,9 +23,9 @@ Each step is one commit.
 - [x] 14. Polish to match the reference design
 
 **Ship**
-- [ ] 15. Deploy DB, backend, frontend
-- [ ] 16. README (setup, env, API overview, live links)
-- [ ] 17. Final cleanup pass: unused code/deps, typecheck, manual end-to-end test
+- [x] 15. Deploy DB, backend, frontend
+- [x] 16. README (setup, env, API overview, live links)
+- [x] 17. Final cleanup pass: unused code/deps, typecheck, manual end-to-end test
 
 ## Data model
 ```
@@ -90,5 +90,3 @@ A running timer counts up to the request time; logs are clipped to `[from, to]`.
 
 `durationSeconds` is derived on the server; for a running timer (`endedAt: null`) it counts up to the DB's `now()`. Only the caller's logs are ever returned, so another user's `taskId` yields `[]`.
 
-## Open questions
-- Deployment targets (suggestion: Neon/Supabase Postgres, Render backend, Vercel frontend).
