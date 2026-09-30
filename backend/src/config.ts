@@ -5,7 +5,7 @@ const schema = z.object({
   PORT: z.coerce.number().int().positive().default(4000),
   DATABASE_URL: z.url(),
   JWT_SECRET: z.string().min(32),
-  JWT_EXPIRES_IN_SECONDS: z.coerce.number().int().positive().default(3600),
+  JWT_EXPIRES_IN: z.string().regex(/^\d+[smhd]$/, "use a duration like 24h").default("24h"),
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
   CORS_ORIGINS: z.string().transform((list) => list.split(",").map((origin) => origin.trim())),
 });

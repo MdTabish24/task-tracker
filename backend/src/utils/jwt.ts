@@ -5,7 +5,7 @@ export const signToken = (userId: string) =>
   jwt.sign({}, config.JWT_SECRET, {
     subject: userId,
     algorithm: "HS256",
-    expiresIn: config.JWT_EXPIRES_IN_SECONDS,
+    expiresIn: config.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
   });
 
 export function verifyToken(token: string): string {
