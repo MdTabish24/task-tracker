@@ -10,7 +10,7 @@ A responsive task and time tracker with private workspaces, refresh-safe timers,
 
 ## What it does
 
-- Sign up, log in and manage only your own tasks and time logs.
+- Verify your email with a one-time code at signup, then log in and manage only your own tasks and time logs.
 - Create, edit and delete tasks; start or stop one timer at a time. Elapsed time survives refreshes.
 - Browse individual time logs and see daily totals by task.
 - Switch between light and dark neumorphic themes on desktop or mobile.
@@ -53,6 +53,8 @@ npm ci
 npm run dev
 ```
 
+Without SMTP credentials, development prints signup codes in the backend terminal. Production requires a Gmail address with 2-Step Verification and an [app password](https://support.google.com/mail/answer/185833); keep both in the backend `.env` on the VPS.
+
 Backend tests (Vitest + Supertest, run against `task_tracker_test`):
 
 ```bash
@@ -71,6 +73,8 @@ cd backend && npm test
 | `NODE_ENV` | no | `development` (default), `production` or `test` |
 | `PORT` | no | Default `3000` |
 | `JWT_EXPIRES_IN` | no | Token lifetime such as `24h` (default), `90m` |
+| `SMTP_USER` | production | Gmail address used to send signup codes |
+| `SMTP_APP_PASSWORD` | production | Gmail app password (never the account password) |
 
 **Frontend**
 
@@ -80,11 +84,11 @@ cd backend && npm test
 
 ## API overview
 
-All routes are under `/api` and need `Authorization: Bearer <token>` except signup and login. Full request and response shapes are in [PLAN.md](PLAN.md#api-contract).
+All routes are under `/api` and need `Authorization: Bearer <token>` except signup, verification, code resend and login. Full request and response shapes are in [PLAN.md](PLAN.md#api-contract).
 
 | Route | Purpose |
 |---|---|
-| `POST /auth/signup`, `POST /auth/login`, `GET /auth/me` | Authentication |
+| `POST /auth/signup`, `POST /auth/verify`, `POST /auth/resend`, `POST /auth/login`, `GET /auth/me` | Authentication and signup verification |
 | `GET /tasks`, `POST /tasks`, `GET/PATCH/DELETE /tasks/:id` | Task management |
 | `POST /tasks/:id/timer/start`, `POST /timer/stop`, `GET /timer/active` | Timer |
 | `GET /time-logs` | Paginated time logs (`from`, `to`, `taskId`, `limit`, `offset`) |
@@ -101,4 +105,4 @@ The app and API are served from one origin on an Oracle Cloud VPS.
 
 ## CI/CD
 
-[GitHub Actions](.github/workflows/ci.yml) runs backend typecheck, 17 API tests against an isolated PostgreSQL service, and both production builds on every pull request and push. A passing push to `main` runs the [VPS deploy script](deploy/vps-deploy.sh): install locked dependencies, build, apply migrations, restart the API and check the live app. Deployment uses a restricted SSH key stored in GitHub Actions secrets; database and JWT secrets stay on the VPS.
+[GitHub Actions](.github/workflows/ci.yml) runs backend typecheck, API tests against an isolated PostgreSQL service, and both production builds on every pull request and push. A passing push to `main` runs the [VPS deploy script](deploy/vps-deploy.sh): install locked dependencies, build, apply migrations, restart the API and check the live app. Deployment uses a restricted SSH key stored in GitHub Actions secrets; database, JWT and SMTP secrets stay on the VPS.

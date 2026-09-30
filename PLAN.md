@@ -10,6 +10,7 @@ Each step is one commit.
 - [x] 2. Postgres connection + SQL migrations (users, tasks, time_logs) + migrate runner + seed script
 - [x] 3. Central error handler (`AppError`) + Zod validation middleware
 - [x] 4. Auth: signup, login, `me`, JWT middleware, rate limiting, helmet, CORS allowlist
+- [x] 4a. Email verification before first login (expiring, attempt-limited OTP)
 - [x] 5. Tasks: create, list, get, update, delete (user-scoped)
 - [x] 6. Timer: start, stop, active (one per user)
 - [x] 7. Daily summary
@@ -36,7 +37,7 @@ unique index on time_logs(user_id) where ended_at is null   -- one active timer 
 ```
 
 ## API contract
-Base path `/api`. JSON everywhere. All routes except signup/login need `Authorization: Bearer <token>`.
+Base path `/api`. JSON everywhere. All routes except signup, verify, resend and login need `Authorization: Bearer <token>`.
 
 **Error shape** (all errors): `{ "error": { "message": string, "details"?: object } }`
 Statuses: `400` validation, `401` missing/invalid token or bad credentials, `404` not found (or not yours), `409` conflict, `429` rate limited (auth routes), `500` unexpected.
@@ -54,7 +55,9 @@ TimeLogEntry { id, taskId, taskTitle, startedAt, endedAt: string | null, duratio
 ### Auth
 | Route | Body | Success |
 |---|---|---|
-| `POST /auth/signup` | `{ name, email, password (min 8) }` | `201 { token, user }` (`409` if email taken) |
+| `POST /auth/signup` | `{ name, email, password (min 8) }` | `202 { message }` (emails a 6-digit code; `409` if email taken, `429` if requested again within 60 seconds) |
+| `POST /auth/verify` | `{ email, code }` | `201 { token, user }` (code expires after 10 minutes; 5 attempts) |
+| `POST /auth/resend` | `{ email }` | `202 { message }` (`429` within 60 seconds) |
 | `POST /auth/login` | `{ email, password }` | `200 { token, user }` |
 | `GET /auth/me` | – | `200 User` |
 

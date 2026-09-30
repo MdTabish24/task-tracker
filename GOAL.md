@@ -8,6 +8,7 @@ Build a **Task and Time Tracking App** (full stack) for a job assignment. Users 
 
 ### 1. Authentication
 - [ ] Sign up
+- [ ] Verify email with a one-time code before first login
 - [ ] Log in
 - [ ] Log out
 - [ ] Passwords hashed (bcrypt), sessions via JWT

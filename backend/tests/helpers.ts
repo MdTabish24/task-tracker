@@ -12,7 +12,8 @@ export async function createTask(auth: Auth, title = "Task"): Promise<string> {
 }
 
 export async function signup(email = "user@example.com") {
-  const res = await api().post("/api/auth/signup").send({ name: "User", email, password: "password123" });
+  await api().post("/api/auth/signup").send({ name: "User", email, password: "password123" });
+  const res = await api().post("/api/auth/verify").send({ email, code: process.env.TEST_VERIFICATION_CODE });
   return { token: res.body.token as string, auth: { Authorization: `Bearer ${res.body.token}` } };
 }
 

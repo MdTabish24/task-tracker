@@ -20,7 +20,7 @@ Company reviewers will read this repo. The code must be small, clean and high qu
 ## 3. Security and data scoping
 - Every query is scoped to the authenticated user (`WHERE user_id = $1`). A user must never read or modify another user's tasks or time logs.
 - Someone else's resource returns `404`, same as a missing one.
-- All routes except signup/login require the auth middleware.
+- All routes except signup, verification, code resend and login require the auth middleware.
 - Never return or log password hashes.
 
 ## 4. HTTP and errors

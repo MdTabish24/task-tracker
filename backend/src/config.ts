@@ -7,6 +7,10 @@ const schema = z.object({
   JWT_SECRET: z.string().min(32),
   JWT_EXPIRES_IN: z.string().regex(/^\d+[smhd]$/, "use a duration like 24h").default("24h"),
   CORS_ORIGINS: z.string().transform((list) => list.split(",").map((origin) => origin.trim())),
+  SMTP_USER: z.email().optional(),
+  SMTP_APP_PASSWORD: z.string().min(16).optional(),
+}).refine((env) => env.NODE_ENV !== "production" || (env.SMTP_USER && env.SMTP_APP_PASSWORD), {
+  message: "SMTP_USER and SMTP_APP_PASSWORD are required in production",
 });
 
 const parsed = schema.safeParse(process.env);

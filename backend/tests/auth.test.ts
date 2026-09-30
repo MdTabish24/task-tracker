@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest";
+import { pool } from "../src/db";
 import { api, signup } from "./helpers";
 
 const credentials = { email: "user@example.com", password: "password123" };
 
 describe("auth", () => {
   it("signs up, then logs in with the same credentials", async () => {
-    const created = await api().post("/api/auth/signup").send({ name: "User", ...credentials });
+    const pending = await api().post("/api/auth/signup").send({ name: "User", ...credentials });
+    expect(pending.status).toBe(202);
+    expect((await api().post("/api/auth/login").send(credentials)).status).toBe(401);
+
+    const created = await api().post("/api/auth/verify").send({ email: credentials.email, code: process.env.TEST_VERIFICATION_CODE });
     expect(created.status).toBe(201);
     expect(created.body.user).toMatchObject({ name: "User", email: credentials.email });
     expect(created.body.user.passwordHash).toBeUndefined();
@@ -19,6 +24,24 @@ describe("auth", () => {
     await signup();
     const res = await api().post("/api/auth/signup").send({ name: "Other", ...credentials });
     expect(res.status).toBe(409);
+  });
+
+  it("limits invalid codes and rejects expired ones", async () => {
+    await api().post("/api/auth/signup").send({ name: "User", ...credentials });
+    const verify = (code: string) => api().post("/api/auth/verify").send({ email: credentials.email, code });
+    for (let attempt = 0; attempt < 5; attempt++) expect((await verify("000000")).status).toBe(400);
+    expect((await verify(process.env.TEST_VERIFICATION_CODE!)).status).toBe(400);
+    await pool.query("UPDATE pending_signups SET attempts = 0, expires_at = now() - interval '1 minute'");
+    expect((await verify(process.env.TEST_VERIFICATION_CODE!)).status).toBe(400);
+  });
+
+  it("resends a fresh code after the cooldown", async () => {
+    await api().post("/api/auth/signup").send({ name: "User", ...credentials });
+    const resend = () => api().post("/api/auth/resend").send({ email: credentials.email });
+    expect((await resend()).status).toBe(429);
+    await pool.query("UPDATE pending_signups SET sent_at = now() - interval '1 minute'");
+    expect((await resend()).status).toBe(202);
+    expect((await api().post("/api/auth/verify").send({ email: credentials.email, code: process.env.TEST_VERIFICATION_CODE })).status).toBe(201);
   });
 
   it("rejects invalid input with 400 and wrong credentials with 401", async () => {
