@@ -24,7 +24,9 @@ function IconButton({ label, onClick, children }: { label: string; onClick: () =
 
 function Auth({ onSuccess, themeButton }: { onSuccess: (session: Session) => void; themeButton: ReactNode }) {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
+  const [pendingEmail, setPendingEmail] = useState(() => sessionStorage.getItem('pending-email') || '')
   const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -32,17 +34,45 @@ function Auth({ onSuccess, themeButton }: { onSuccess: (session: Session) => voi
     setBusy(true)
     setError('')
     try {
-      const session = await request<Session>(`/auth/${mode}`, undefined, json('POST', Object.fromEntries(data)))
-      onSuccess(session)
+      if (mode === 'signup') {
+        await request('/auth/signup', undefined, json('POST', Object.fromEntries(data)))
+        const email = String(data.get('email')).trim().toLowerCase()
+        sessionStorage.setItem('pending-email', email)
+        setPendingEmail(email)
+        setMessage('We sent a verification code to your email.')
+      } else {
+        onSuccess(await request<Session>('/auth/login', undefined, json('POST', Object.fromEntries(data))))
+      }
     } catch (cause) { setError((cause as Error).message) }
+    finally { setBusy(false) }
+  }
+  async function verify(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setBusy(true); setError('')
+    try {
+      const code = String(new FormData(event.currentTarget).get('code'))
+      const session = await request<Session>('/auth/verify', undefined, json('POST', { email: pendingEmail, code }))
+      sessionStorage.removeItem('pending-email'); onSuccess(session)
+    } catch (cause) { setError((cause as Error).message) }
+    finally { setBusy(false) }
+  }
+  async function resend() {
+    setBusy(true); setError(''); setMessage('')
+    try { await request('/auth/resend', undefined, json('POST', { email: pendingEmail })); setMessage('A new code is on its way.') }
+    catch (cause) { setError((cause as Error).message) }
     finally { setBusy(false) }
   }
   return <main className="flex min-h-screen items-center justify-center p-5">
     <div className="card w-full max-w-md p-7 sm:p-10">
       <div className="mb-9 flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400" /><span className="h-3 w-3 rounded-full bg-amber-400" /><span className="h-3 w-3 rounded-full bg-emerald-400" /><span className="ml-auto">{themeButton}</span></div>
-      <h1 className="text-center text-2xl font-bold tracking-tight">Task and Time Tracker</h1>
-      <p className="mt-2 text-center text-sm text-muted">Stay focused. See where your time goes.</p>
-      <div className="mt-9 grid grid-cols-2 gap-3" role="tablist" aria-label="Account">
+      <h1 className="text-center text-2xl font-bold tracking-tight">{pendingEmail ? 'Verify your email' : 'Task and Time Tracker'}</h1>
+      <p className="mt-2 text-center text-sm text-muted">{pendingEmail || 'Stay focused. See where your time goes.'}</p>
+      {pendingEmail ? <form onSubmit={verify} className="mt-9 space-y-4">
+        <input className="field text-center tracking-widest" name="code" aria-label="Verification code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} placeholder="6-digit code" required />
+        {message && <p className="text-sm text-muted">{message}</p>}
+        {error && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{error}</p>}
+        <button disabled={busy} className="button button-primary w-full">Verify account</button>
+        <div className="flex justify-between text-sm"><button type="button" disabled={busy} className="text-accent" onClick={() => { sessionStorage.removeItem('pending-email'); setPendingEmail(''); setMode('login'); setError('') }}>Back to login</button><button type="button" disabled={busy} className="text-accent" onClick={() => void resend()}>Resend code</button></div>
+      </form> : <><div className="mt-9 grid grid-cols-2 gap-3" role="tablist" aria-label="Account">
         {(['login', 'signup'] as const).map(item => <button key={item} type="button" role="tab" aria-selected={mode === item} onClick={() => { setMode(item); setError('') }} className={`rounded-xl py-3 text-sm font-semibold ${mode === item ? 'text-accent shadow-raised' : 'text-muted'}`}>{item === 'login' ? 'Login' : 'Sign up'}</button>)}
       </div>
       <form onSubmit={submit} className="mt-8 space-y-4">
@@ -51,7 +81,7 @@ function Auth({ onSuccess, themeButton }: { onSuccess: (session: Session) => voi
         <input className="field" name="password" type="password" placeholder="Password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} minLength={mode === 'signup' ? 8 : undefined} required />
         {error && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{error}</p>}
         <button disabled={busy} className="button button-primary w-full">{busy ? 'Please wait…' : mode === 'login' ? 'Login' : 'Create account'}</button>
-      </form>
+      </form></>}
     </div>
   </main>
 }
