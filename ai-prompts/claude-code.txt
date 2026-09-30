@@ -1,0 +1,2554 @@
+
+> Bhai, mujhe ek job ke liye full-stack assignment banana hai aur tere saath
+  properly banana chahta hoon. Poora assignment neeche diya hai. App ka code
+  likhne se pehle project ka brain set up kar:
+
+  1. Repo root mein GOAL.md bana: kya bana rahe hain, saari requirements
+  checklist ke form mein, deliverables, deadline (2 Oct 2026) aur evaluation
+  criteria.
+  2. AGENTS.md bana jisme kisi bhi AI agent ke liye rules ho (main isi repo
+  mein Codex bhi use karunga). Ek CLAUDE.md bhi bana jo bas AGENTS.md ko point
+  kare.
+  3. PLAN.md bana: chhote-chhote ordered steps, aur ek chhota API contract
+  (routes, request/response shapes) taaki backend aur frontend sync mein
+  rahein.
+
+  AGENTS.md mein ye rules daal, sabse important wala sabse upar:
+  - Code chhota, clean aur high quality rakhna hai. Garbage bilkul nahi: dead
+  code nahi, unused files ya dependencies nahi, faltu abstractions nahi, noisy
+  comments nahi, console.log nahi, placeholder features nahi. Jo kaam 10 line
+  mein ho sakta hai, uske liye 50 line mat likhna. Company ke reviewers ye repo
+  padhenge aur mujhe chahiye ki wo code ki tightness dekh ke impress hon.
+  - Backend TypeScript (strict) mein: Express + PostgreSQL + JWT auth with
+  bcrypt, validation ke liye Zod. Routes, controllers aur services alag rakhna,
+  lekin over-engineering nahi.
+  - Har query logged-in user ke scope mein ho. Ek user doosre ke tasks ya time
+  logs ko kabhi touch na kar sake.
+  - Sahi HTTP status codes aur ek central error handler.
+  - Timer server pe stored start timestamp se calculate ho, client se nahi,
+  taaki refresh ke baad bhi sahi rahe. Ek user ka ek hi active timer.
+  - Chhote commits, clear messages, ek commit mein ek feature.
+
+  Baad mein main UI ki reference image dunga. Frontend usi design ko closely
+  follow kare. Jab tak main plan dekh ke "go" na bolu, coding shuru mat karna.
+
+  Assignment:
+  [
+  Full Stack Assignment
+  Task and Time Tracking App
+  Users should be able to manage tasks, track time spent using a real-time
+  timer, and view daily productivity summaries.
+  This assignment evaluates your backend design, API structure, authentication,
+  deployment, and ability to build clean, functional user interfaces.
+  Core Requirements
+  1. Authentication
+     Users must be able to sign up, log in, and log out securely.
+     Users should only see and manage their own tasks and time logs.
+     All protected routes and APIs must enforce authorization checks.
+  2. Task Management
+     Users can create tasks using natural language input (e.g., "follow up with
+  designer").
+     Optionally use an AI API to auto-generate:
+     A clearer task title
+     A more structured description
+     Example
+     User input:
+     "follow up with designer"
+     AI-generated suggestion:
+     Title: "Follow up with UI Designer"
+     Description: "Send a Slack message to confirm wireframe delivery status."
+     Users must also be able to:
+     View all tasks
+     Edit/update task details
+     ]
+
+● Ek cheez pehle: paste kiya hua assignment "Edit/update task details" pe kat
+  gaya hai. Timer, daily summary aur deployment ki requirements usme nahi hain.
+  Intro line aur tere rules se maine unhe infer kiya hai aur GOAL.md mein
+  "inferred" mark kiya hai. Poora text mile to bata dena.
+
+● Write(GOAL.md)
+  ⎿  Wrote 49 lines to GOAL.md
+      1 # GOAL
+      2
+        ignment. Users manage tasks, track time with a real-time timer, a
+        nd view daily productivity summaries.
+      4
+      6
+      7 ## Requirements
+      8
+        ted assignment text was cut off after "Task Management". Confirm
+        against the full text when available.
+     … +51 lines (ctrl+o to expand)
+
+● Write(AGENTS.md)
+  ⎿  Wrote 45 lines to AGENTS.md
+       1 # AGENTS.md
+       3 Rules for any AI agent (Claude Code, Codex, etc.) working in thi
+         N.md](PLAN.md) for the steps and API contract. Do not start codi
+         ng a step the user hasn't approved.
+       5 ## 1. Code quality (most important)
+         lean and high quality.
+         ies, no needless abstractions, no noisy comments, no `console.lo
+         g`, no placeholder or speculative features.
+       9 - Add a dependency only when it clearly earns its place; remove
+      10 - Com
+     … +58 lines (ctrl+o to expand)
+
+● Write(CLAUDE.md)
+  ⎿  Wrote 1 line to CLAUDE.md
+      1 See [AGENTS.md](AGENTS.md). All rules live there.
+
+● Write(PLAN.md)
+  ⎿  Wrote 86 lines to PLAN.md
+       1 # PLAN
+       3 Assumptions (change if you disagree): monorepo with `backend/` a
+         nd `frontend/`; frontend is React + Vite + TypeScript; auth via
+         n); AI suggestions via the Claude API, optional and off if no ke
+       4
+       5 ## Steps
+       7
+       8 **Backend**
+         nfig (Zod), health route, `.gitignore`, `.env.example`
+         logs) + migrate script
+     … +104 lines (ctrl+o to expand)
+
+● Repo root mein chaar files ban gayi hain: GOAL.md, AGENTS.md, CLAUDE.md aur
+  PLAN.md. Coding shuru nahi ki hai. Tere "go" ka wait hai.
+
+  - GOAL.md: isme requirements checklist, deliverables, deadline aur evaluation
+    criteria hain.
+  - AGENTS.md: code-quality wala rule sabse upar hai, uske baad backend, data
+    scoping, HTTP/errors, timer, git aur working agreement. Codex bhi isi ko
+    padhega.
+  - CLAUDE.md: sirf AGENTS.md ko point karta hai.
+  - PLAN.md: 17 chhote steps hain, har step ek commit. Saath mein data model aur
+    API contract hai (routes, request/response shapes, error format).
+
+  Kuch cheezein dhyan mein rakh:
+
+  1. Assignment adhoora hai. Timer, daily summary aur deployment requirements
+     paste mein nahi aayi. Maine unhe intro aur tere rules se infer karke
+     GOAL.md mein (inferred) mark kiya hai. Poora text mile to bhej de.
+  2. Deadline paas hai. Aaj 30 Sep hai, deadline 2 Oct, yaani do din. Plan ko
+     usi hisaab se chhota rakha hai.
+  3. Meri assumptions PLAN.md ke top pe hain:
+     - Monorepo: backend/ aur frontend/.
+     - Frontend React + Vite + TypeScript.
+     - Auth Bearer JWT, logout mein client token hata deta hai.
+     - AI suggestion Claude API se, optional.
+     - Task delete nahi rakha, kyunki visible assignment mein nahi hai.
+     - Ek user ka ek active timer database ke partial unique index se enforce
+       hoga.
+  4. Deployment ka suggestion: Neon ya Supabase Postgres, Render backend, Vercel
+     frontend. Ye PLAN.md ke open questions mein hai.
+
+  Kuch badalna ho to bata, warna "go" bol aur reference image bhej de. Backend
+  steps 1 se 8 UI image ke bina ho jayenge.
+
+> <ide_opened_file>The user opened the file c:\Users\Mohammad
+  Tabish\Documents\Shared from ubuntu\task-tracker\GOAL.md in the IDE. This may
+  or may not be related to the current task.</ide_opened_file>
+
+> Plan dekh liya, go. Do corrections pehle:
+
+  1. Task delete required hai (assignment mein "Delete a task" explicitly hai).
+  DELETE /tasks/:id add kar, time logs ke saath ON DELETE CASCADE.
+  2. Timer, daily summary aur deployment requirements assignment mein hain,
+  paste adhoora gaya tha. Poora text neeche paste kar raha hoon. GOAL.md se
+  (inferred) tags hata aur PLAN.md us hisaab se update kar.
+
+  Ab sirf backend/ pe kaam kar, steps 1 se 8. Frontend dusra agent handle kar
+  raha hai, /frontend ko touch mat karna aur shared files (GOAL, AGENTS, PLAN)
+  sirf update karna, restructure nahi. API contract freeze rakh, kuch badalna
+  ho toh pehle mujhe bata.
+
+  Technical expectations:
+  - Layered structure: route -> controller -> service -> repository.
+  Controllers thin, business rules services mein, SQL sirf repositories mein.
+  Parameterized queries only, ORM ki zaroorat nahi.
+  - Zod schemas se request validation middleware level pe (body, params,
+  query), aur env vars bhi startup pe Zod se validate ho, missing config pe
+  fail-fast.
+  - Auth: bcrypt (cost 12), JWT short expiry, ek authenticate middleware.
+  Authorization ownership-scoped queries se ho (WHERE user_id = $1 har query
+  mein) taaki IDOR possible hi na ho. Doosre user ki resource pe 404 de, 403
+  nahi, taaki resource enumeration na ho.
+  - Auth endpoints pe rate limiting, helmet aur strict CORS allowlist.
+  - Timer server-authoritative ho: started_at aur ended_at TIMESTAMPTZ (UTC)
+  mein. Elapsed client pe started_at se derive hoga, toh refresh pe bhi sahi
+  rahega.
+  - Ek user ka ek active timer DB level pe enforce kar: time_logs pe partial
+  unique index (user_id) WHERE ended_at IS NULL. Start pe agar active timer hai
+  toh 409. Stop idempotent-safe ho (already stopped pe 409, crash nahi).
+  - Start/stop aur delete jaisi multi-step operations transaction mein.
+  - Daily summary ek aggregate query se (SUM, GROUP BY task), day boundary user
+  ki timezone ke hisaab se (client timezone query param se), UTC assume nahi.
+  - Ek central error handler: typed AppError, consistent JSON error shape,
+  proper status codes (400 validation, 401 unauthenticated, 404, 409 conflict).
+  Stack trace production mein leak nahi honi chahiye.
+  - SQL migrations plain .sql files mein, ek chhota runner, seed script test
+  user ke saath.
+  - Supertest se integration tests, sirf critical paths pe: auth, cross-user
+  access denial (user A user B ka task na dekh sake), single-active-timer rule,
+  daily summary math. Tests bhi lean rakhna.
+
+  Code quality rule wahi hai jo AGENTS.md mein upar hai: chhota, tight, zero
+  garbage. Har step ke baad tests chala, phir ek focused commit (conventional
+  commits, jaise feat(auth): ..., feat(timer): ...). Step 1 se shuru kar aur
+  har 2-3 steps ke baad mujhe short status de.
+
+● Ek problem: "Poora text neeche paste kar raha hoon" likha hai, lekin message
+  mein koi paste aaya nahi. Isliye maine sirf tere bataye hue "Delete a task"
+  aur confirm kiye hue timer, summary, deployment ke hisaab se kaam kiya hai.
+  Pehle environment dekhta hoon.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Docker daemon band hai aur psql installed nahi hai. Pehle docs ke corrections
+  karta hoon aur Docker Desktop start karne ki koshish karta hoon.
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● Update(GOAL.md)
+  ⎿  Removed 2 lines
+       6  
+       7  ## Requirements
+       8  
+       9 -Items marked *(inferred)* come from the assignment intro; the p
+         -asted assignment text was cut off after "Task Management". Conf
+         -irm against the full text when available.                      
+      10 -                                                               
+       9  ### 1. Authentication
+      10  - [ ] Sign up
+      11  - [ ] Log in
+
+● Update(GOAL.md)
+  ⎿  Added 2 lines, removed 1 line
+      19  - [ ] *(optional)* AI suggests a clearer title and a structured
+           description before saving
+      20  - [ ] View all tasks
+      21  - [ ] Edit/update task details
+      22 +- [ ] Delete a task                                            
+      23  
+      23 -### 3. Time tracking *(inferred)*                              
+      24 +### 3. Time tracking                                           
+      25  - [ ] Start a timer on a task, stop it
+      26  - [ ] Timer is real-time in the UI and survives page refresh (c
+          omputed from a server-stored start timestamp)
+      27  - [ ] One active timer per user
+
+● Update(GOAL.md)
+  ⎿  Added 1 line, removed 1 line
+      27  - [ ] One active timer per user
+      28  - [ ] Time logs stored per task
+      29  
+      30 -### 4. Daily summary *(inferred)*                              
+      30 +### 4. Daily summary                                           
+      31  - [ ] Total time tracked for a day
+      32  - [ ] Breakdown per task
+      33  
+
+● Update(GOAL.md)
+  ⎿  Added 1 line, removed 1 line
+      31  - [ ] Total time tracked for a day
+      32  - [ ] Breakdown per task
+      33  
+      34 -### 5. Deployment *(inferred: "evaluates ... deployment")*     
+      34 +### 5. Deployment                                              
+      35  - [ ] Backend, database and frontend deployed and reachable via
+           public URLs
+      36  - [ ] README with setup steps and live links
+      37  
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(AGENTS.md)
+  ⎿  Added 1 line, removed 1 line
+      14  ## 2. Backend
+      15  - TypeScript, `strict: true`. No `any`.
+      16  - Express + PostgreSQL (`pg`, plain SQL, no ORM) + JWT auth wit
+          h bcrypt + Zod for all input validation.
+      17 -- Layout: `routes` (wiring + validation) → `controllers` (HTTP 
+         -in/out) → `services` (logic + queries). Keep it flat; don't ove
+         -r-engineer.                                                    
+      17 +- Layout: `routes` (wiring + Zod validation middleware) → `cont
+         +rollers` (thin, HTTP in/out) → `services` (business rules) → `r
+         +epositories` (all SQL, parameterized only). Keep it flat; don't
+         + over-engineer.                                                
+      18  - Config from environment variables, validated once at startup.
+           Never commit secrets; keep `.env.example` current.
+      19  
+      20  ## 3. Security and data scoping
+
+● Update(AGENTS.md)
+  ⎿  Added 1 line, removed 1 line
+      28  - One central error handler produces the response shape defined
+           in PLAN.md. Controllers throw; they don't format errors.
+      29  
+      30  ## 5. Timer
+      31 -- Elapsed time is derived from the stored `started_at` on the s
+         -erver, never counted by the client, so it stays correct across 
+         -refreshes.                                                     
+      31 +- The server owns `started_at`/`ended_at` (`TIMESTAMPTZ`, UTC).
+         + Clients derive elapsed time from `started_at`, never from a lo
+         +cal counter, so it stays correct across refreshes.             
+      32  - One active timer per user, enforced by the database (partial 
+          unique index), not just by application code.
+      33  
+      34  ## 6. Frontend
+
+● Update(AGENTS.md)
+  ⎿  Added 1 line, removed 1 line
+      36  - Keep components small; no state library or UI kit unless clea
+          rly justified.
+      37  
+      38  ## 7. Git
+      39 -- Small commits, one feature per commit, clear imperative messa
+         -ges (`Add task creation endpoint`).                            
+      39 +- Small commits, one feature per commit, conventional commit me
+         +ssages (`feat(auth): add signup and login`).                   
+      40  - Don't commit generated files, `node_modules`, or `.env`.
+      41  - Don't commit or push unless the user asks.
+      42  
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(PLAN.md)
+  ⎿  Added 4 lines, removed 4 lines
+       7  
+       8  **Backend**
+       9  - [ ] 1. Scaffold `backend/`: TypeScript strict, Express, env c
+          onfig (Zod), health route, `.gitignore`, `.env.example`
+      10 -- [ ] 2. Postgres connection + `schema.sql` (users, tasks, time
+         -_logs) + migrate script                                        
+      11 -- [ ] 3. Central error handler + validation helper             
+      12 -- [ ] 4. Auth: signup, login, `me`, JWT middleware             
+      13 -- [ ] 5. Tasks: create, list, get, update (user-scoped)        
+      10 +- [ ] 2. Postgres connection + SQL migrations (users, tasks, ti
+         +me_logs) + migrate runner + seed script                        
+      11 +- [ ] 3. Central error handler (`AppError`) + Zod validation mi
+         +ddleware                                                       
+      12 +- [ ] 4. Auth: signup, login, `me`, JWT middleware, rate limiti
+         +ng, helmet, CORS allowlist                                     
+      13 +- [ ] 5. Tasks: create, list, get, update, delete (user-scoped)
+      14  - [ ] 6. Timer: start, stop, active (one per user)
+      15  - [ ] 7. Daily summary
+      16  - [ ] 8. AI task suggestion endpoint
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Edit sahi lag gaya. Ab contract mein DELETE, cascade aur open question update
+  karta hoon.
+
+● Update(PLAN.md)  ⎿  Added 1 line
+      63  | `GET /tasks` | – | `200 Task[]` (newest first) |
+      64  | `GET /tasks/:id` | – | `200 Task` |
+      65  | `PATCH /tasks/:id` | any of `{ title, description, status }` 
+          | `200 Task` |
+      66 +| `DELETE /tasks/:id` | – | `204` (its time logs are deleted wi
+         +th it; stops the timer if running) |                           
+      67  | `POST /tasks/suggest` | `{ input }` (natural language) | `200
+           { title, description }` (not saved; client then calls `POST /t
+          asks`) |
+      68  
+      69  ### Timer
+
+● Update(PLAN.md)
+  ⎿  Added 1 line, removed 1 line
+      32  ```
+      33  users(id uuid pk, name text, email text unique, password_hash t
+          ext, created_at)
+      34  tasks(id uuid pk, user_id fk, title text, description text, sta
+          tus 'todo'|'in_progress'|'done', created_at, updated_at)
+      35 -time_logs(id uuid pk, user_id fk, task_id fk, started_at timest
+         -amptz, ended_at timestamptz null)                              
+      35 +time_logs(id uuid pk, user_id fk, task_id fk on delete cascade,
+         + started_at timestamptz, ended_at timestamptz null)            
+      36  unique index on time_logs(user_id) where ended_at is null   -- 
+          one active timer per user
+      37  ```
+      38  
+
+● Update(PLAN.md)
+  ⎿  Removed 1 line
+      83  A running timer counts up to the request time; logs are clipped
+           to `[from, to]`.
+      84  
+      85  ## Open questions
+      86 -- Is task delete required? Not in the visible assignment, so it
+         -'s omitted.                                                    
+      86  - Deployment targets (suggestion: Neon/Supabase Postgres, Rende
+          r backend, Vercel frontend).
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Docs commit ho gaye. Ab Step 1: backend scaffold.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(backend\tsconfig.json)
+  ⎿  Wrote 13 lines to backend\tsconfig.json
+       1 {
+       2   "compilerOptions": {
+       3     "target": "ES2022",
+       4     "module": "CommonJS",
+       5     "outDir": "dist",
+       6     "rootDir": "src",
+       7     "strict": true,
+       8     "noUncheckedIndexedAccess": true,
+       9     "esModuleInterop": true,
+      10     "skipLibCheck": true
+     … +3 lines (ctrl+o to expand)
+
+● Write(backend\src\config.ts)
+  ⎿  Wrote 13 lines to backend\src\config.ts
+       1 import { z } from "zod";
+       2
+       3 const schema = z.object({
+         t("development"),
+       5   PORT: z.coerce.number().int().positive().default(4000),
+       6 });
+       7
+       9 if (!parsed.success) {
+      10   throw new Error(`Invalid environment:\n${z.prettifyError(parse
+         d.error)}`);
+     … +5 lines (ctrl+o to expand)
+
+● Write(backend\src\app.ts)
+  ⎿  Wrote 9 lines to backend\src\app.ts
+      1 import express from "express";
+      2
+      3 export const app = express();
+      4
+      5 app.use(express.json());
+      6
+      7 app.get("/health", (_req, res) => {
+      8   res.json({ status: "ok" });
+      9 });
+
+● Write(backend\src\server.ts)
+  ⎿  Wrote 6 lines to backend\src\server.ts
+      1 import { app } from "./app";
+      2 import { config } from "./config";
+      3
+      4 app.listen(config.PORT, () => {
+      5   process.stdout.write(`Listening on :${config.PORT}\n`);
+      6 });
+
+● Write(backend\.env.example)
+  ⎿  Wrote 2 lines to backend\.env.example
+      1 NODE_ENV=development
+      2 PORT=4000
+
+  Ran 5 shell commands (ctrl+o to expand)
+
+● Step 1 commit ho gaya. Ab Step 2 ke liye local Postgres ka Docker container
+  start kar raha hoon, alag port pe, taaki teri doosri containers ko na chhoo.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Postgres abhi init restart kar raha hai. Thodi der wait karke dobara try karta
+  hoon.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Write(backend\migrations\001_init.sql)
+  ⎿  Wrote 32 lines to backend\migrations\001_init.sql
+       1 CREATE TABLE users (
+       2   id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+       3   name          text NOT NULL,
+       4   email         text NOT NULL UNIQUE,
+       5   password_hash text NOT NULL,
+       6   created_at    timestamptz NOT NULL DEFAULT now()
+       7 );
+       8
+       9 CREATE TABLE tasks (
+      10   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+     … +26 lines (ctrl+o to expand)
+
+● Write(backend\src\db\index.ts)
+  ⎿  Wrote 19 lines to backend\src\db\index.ts
+       1 import { Pool, PoolClient } from "pg";
+       2 import { config } from "../config";
+       3
+         _URL });
+       5
+       6 export async function withTransaction<T>(work: (client: PoolClie
+         nt) => Promise<T>): Promise<T> {
+       8   try {
+       9     await client.query("BEGIN");
+      10     const result = await work(client);
+     … +11 lines (ctrl+o to expand)
+
+● Write(backend\src\db\migrate.ts)
+  ⎿  Wrote 24 lines to backend\src\db\migrate.ts
+       1 import { readdirSync, readFileSync } from "node:fs";
+       2 import path from "node:path";
+       3 import { pool, withTransaction } from "./index";
+       5 const dir = path.join(__dirname, "../../migrations");
+       6
+       7 export async function migrate(): Promise<void> {
+       8   await pool.query("CREATE TABLE IF NOT EXISTS schema_migrations
+       9   const { rows } = await pool.query<{ name: string }>("SELECT na
+         me FROM schema_migrations");
+      10   const applied = new Set(rows.map((row) => row.name));
+     … +19 lines (ctrl+o to expand)
+
+● Write(backend\src\utils\password.ts)
+  ⎿  Wrote 6 lines to backend\src\utils\password.ts
+      1 import bcrypt from "bcrypt";
+      2
+      3 const COST = 12;
+      4
+      5 export const hashPassword = (password: string) => bcrypt.hash(pas
+        sword, COST);
+      6 export const verifyPassword = (password: string, hash: string) =>
+         bcrypt.compare(password, hash);
+
+● Write(backend\src\utils\password.ts)
+  ⎿  Removed 1 line
+      3  const COST = 12;
+      4  
+      5  export const hashPassword = (password: string) => bcrypt.hash(pa
+         ssword, COST);
+      6 -export const verifyPassword = (password: string, hash: string) =
+        -> bcrypt.compare(password, hash);                               
+
+● Write(backend\src\db\seed.ts)
+  ⎿  Wrote 25 lines to backend\src\db\seed.ts
+       1 import { pool } from "./index";
+       2 import { hashPassword } from "../utils/password";
+       3
+       4 const EMAIL = "test@example.com";
+       5 const PASSWORD = "password123";
+       7 async function seed(): Promise<void> {
+       8   const { rows } = await pool.query<{ id: string }>(
+       9     `INSERT INTO users (name, email, password_hash) VALUES ($1,
+         $2, $3)
+      10      ON CONFLICT (email) DO NOTHING RETURNING id`,
+     … +19 lines (ctrl+o to expand)
+
+● Update(backend\src\config.ts)
+  ⎿  Added 1 line
+      3  const schema = z.object({
+      4    NODE_ENV: z.enum(["development", "production", "test"]).defaul
+         t("development"),
+      5    PORT: z.coerce.number().int().positive().default(4000),
+      6 +  DATABASE_URL: z.url(),                                        
+      7  });
+      8  
+      9  const parsed = schema.safeParse(process.env);
+
+● Update(backend\package.json)
+  ⎿  Added 3 lines, removed 1 line
+       6      "dev": "tsx watch --env-file=.env src/server.ts",
+       7      "build": "tsc",
+       8      "start": "node dist/server.js",
+       9 -    "typecheck": "tsc --noEmit"                                
+       9 +    "typecheck": "tsc --noEmit",                               
+      10 +    "migrate": "tsx --env-file=.env src/db/migrate.ts",        
+      11 +    "seed": "tsx --env-file=.env src/db/seed.ts"               
+      12    },
+      13    "dependencies": {
+      14      "bcrypt": "^6.0.0",
+
+● Write(backend\.env.example)  ⎿  Added 1 line
+      1  NODE_ENV=development
+      2  PORT=4000
+      3 +DATABASE_URL=postgres://postgres:postgres@localhost:5433/task_tr
+        +acker                                                           
+
+● Write(backend\.env)
+  ⎿  Wrote 3 lines to backend\.env
+      1 NODE_ENV=development
+      2 PORT=4000
+      3 DATABASE_URL=postgres://postgres:postgres@localhost:5433/task_tra
+        cker
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Step 2 commit ho gaya, frontend/ untouched hai aur staged nahi hai. Ab Step 3:
+  error handler aur validation middleware.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(backend\src\errors.ts)
+  ⎿  Wrote 9 lines to backend\src\errors.ts
+      1 export class AppError extends Error {
+      2   constructor(
+      3     readonly status: number,
+      4     message: string,
+      5     readonly details?: unknown,
+      6   ) {
+      7     super(message);
+      8   }
+      9 }
+
+● Write(backend\src\middleware\errorHandler.ts)
+  ⎿  Wrote 19 lines to backend\src\middleware\errorHandler.ts
+       1 import type { ErrorRequestHandler, RequestHandler } from "expres
+         s";
+       3
+       4 export const notFoundHandler: RequestHandler = () => {
+       5   throw new AppError(404, "Route not found");
+       7
+       8 export const errorHandler: ErrorRequestHandler = (err, _req, res
+         , _next) => {
+      10     res.status(err.status).json({ error: { message: err.message,
+          details: err.details } });
+     … +13 lines (ctrl+o to expand)
+
+● Write(backend\src\middleware\validate.ts)
+  ⎿  Wrote 18 lines to backend\src\middleware\validate.ts
+       1 import type { RequestHandler } from "express";
+       2 import { z } from "zod";
+       3 import { AppError } from "../errors";
+       4
+       5 type Schemas = Partial<Record<"body" | "params" | "query", z.Zod
+       6
+       7 export const validate =
+       8   (schemas: Schemas): RequestHandler =>
+       9   (req, _res, next) => {
+      10     for (const [part, schema] of Object.entries(schemas)) {
+     … +11 lines (ctrl+o to expand)
+
+● Write(backend\src\app.ts)
+  ⎿  Added 4 lines
+      1  import express from "express";
+      2 +import { errorHandler, notFoundHandler } from "./middleware/erro
+        +rHandler";                                                      
+      3  
+      4  export const app = express();
+      5  
+     ...
+       8  app.get("/health", (_req, res) => {
+       9    res.json({ status: "ok" });
+      10  });
+      11 +                                                               
+      12 +app.use(notFoundHandler);                                      
+      13 +app.use(errorHandler);                                         
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Dono error paths sahi hain. Ab maine jo test servers start kiye the unhe band
+  karta hoon.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Interim status: Steps 1 se 3 commit ho gaye hain (scaffold + env validation,
+  DB migrations + seed, error handler + validate middleware). Ab Step 4: auth.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(backend\src\config.ts)
+  ⎿  Added 3 lines
+       4    NODE_ENV: z.enum(["development", "production", "test"]).defau
+          lt("development"),
+       5    PORT: z.coerce.number().int().positive().default(4000),
+       6    DATABASE_URL: z.url(),
+       7 +  JWT_SECRET: z.string().min(32),                              
+       8 +  JWT_EXPIRES_IN_SECONDS: z.coerce.number().int().positive().de
+         +fault(3600),                                                   
+       9 +  CORS_ORIGINS: z.string().transform((list) => list.split(",").
+         +map((origin) => origin.trim())),                               
+      10  });
+      11  
+      12  const parsed = schema.safeParse(process.env);
+
+● Write(backend\src\utils\password.ts)
+  ⎿  Added 1 line
+      3  const COST = 12;
+      4  
+      5  export const hashPassword = (password: string) => bcrypt.hash(pa
+         ssword, COST);
+      6 +export const verifyPassword = (password: string, hash: string) =
+        +> bcrypt.compare(password, hash);                               
+
+● Write(backend\src\utils\jwt.ts)
+  ⎿  Wrote 15 lines to backend\src\utils\jwt.ts
+      1 import jwt from "jsonwebtoken";
+      2 import { config } from "../config";
+      3
+      4 export const signToken = (userId: string) =>
+      5   jwt.sign({}, config.JWT_SECRET, {
+      6     subject: userId,
+      7     algorithm: "HS256",
+      8     expiresIn: config.JWT_EXPIRES_IN_SECONDS,
+      9   });
+     … +6 lines (ctrl+o to expand)
+
+● Write(backend\src\schemas\auth.ts)
+  ⎿  Wrote 17 lines to backend\src\schemas\auth.ts
+      1 import { z } from "zod";
+      2
+      3 const email = z.string().trim().toLowerCase().pipe(z.email());
+      4
+      5 export const signupSchema = z.object({
+      6   name: z.string().trim().min(1).max(100),
+      7   email,
+      8   password: z.string().min(8).max(72),
+      9 });
+     … +7 lines (ctrl+o to expand)
+
+● Write(backend\src\repositories\userRepository.ts)
+  ⎿  Wrote 28 lines to backend\src\repositories\userRepository.ts
+       1 import { pool } from "../db";
+       2
+       3 export interface User {
+       4   id: string;
+       5   name: string;
+       7 }
+       8
+       9 export async function create(name: string, email: string, passwo
+         rdHash: string): Promise<User> {
+      10   const { rows } = await pool.query<User>(
+     … +23 lines (ctrl+o to expand)
+
+● Write(backend\src\services\authService.ts)
+  ⎿  Wrote 36 lines to backend\src\services\authService.ts
+       1 import { DatabaseError } from "pg";
+       2 import { AppError } from "../errors";
+         ;
+       4 import type { LoginInput, SignupInput } from "../schemas/auth";
+       5 import { signToken } from "../utils/jwt";
+         ;
+       7
+       8 const UNIQUE_VIOLATION = "23505";
+      10 export async function signup({ name, email, password }: SignupIn
+         put) {
+     … +30 lines (ctrl+o to expand)
+
+● Update(backend\src\services\authService.ts)
+  ⎿  Added 4 lines, removed 4 lines
+      21  }
+      22  
+      23  export async function login({ email, password }: LoginInput) {
+      24 +  const invalid = new AppError(401, "Invalid email or password"
+         +);                                                             
+      25    const found = await userRepository.findByEmail(email);
+      25 -  if (!found || !(await verifyPassword(password, found.password
+         -Hash))) {                                                      
+      26 -    throw new AppError(401, "Invalid email or password");      
+      27 -  }                                                            
+      28 -  const { passwordHash: _, ...user } = found;                  
+      26 +  if (!found) throw invalid;                                   
+      27 +  const { passwordHash, ...user } = found;                     
+      28 +  if (!(await verifyPassword(password, passwordHash))) throw in
+         +valid;                                                         
+      29    return { token: signToken(user.id), user };
+      30  }
+      31  
+
+● Write(backend\src\controllers\authController.ts)
+  ⎿  Wrote 14 lines to backend\src\controllers\authController.ts
+       1 import type { RequestHandler } from "express";
+       2 import * as authService from "../services/authService";
+       3
+       4 export const signup: RequestHandler = async (req, res) => {
+       5   res.status(201).json(await authService.signup(req.body));
+       6 };
+       7
+       8 export const login: RequestHandler = async (req, res) => {
+       9   res.json(await authService.login(req.body));
+      10 };
+     … +4 lines (ctrl+o to expand)
+
+● Write(backend\src\middleware\authenticate.ts)
+  ⎿  Wrote 20 lines to backend\src\middleware\authenticate.ts
+      1 import type { RequestHandler } from "express";
+      2 import { AppError } from "../errors";
+      3 import { verifyToken } from "../utils/jwt";
+      4
+      5 declare module "express-serve-static-core" {
+      6   interface Request {
+      7     userId: string;
+      8   }
+      9 }
+     … +12 lines (ctrl+o to expand)
+
+● Write(backend\src\middleware\rateLimit.ts)
+  ⎿  Wrote 12 lines to backend\src\middleware\rateLimit.ts
+       1 import { rateLimit } from "express-rate-limit";
+       2 import { config } from "../config";
+       3 import { AppError } from "../errors";
+       4
+       5 export const authLimiter = rateLimit({
+       6   windowMs: 15 * 60 * 1000,
+       7   limit: 20,
+       8   standardHeaders: true,
+       9   legacyHeaders: false,
+      10   skip: () => config.NODE_ENV === "test",
+     … +3 lines (ctrl+o to expand)
+
+● Write(backend\src\routes\authRoutes.ts)  ⎿  Wrote 12 lines to backend\src\routes\authRoutes.ts
+       1 import { Router } from "express";
+       2 import * as authController from "../controllers/authController";
+       3 import { authenticate } from "../middleware/authenticate";
+       4 import { authLimiter } from "../middleware/rateLimit";
+       5 import { validate } from "../middleware/validate";
+       7
+       8 export const authRoutes = Router();
+       9
+      10 authRoutes.post("/signup", authLimiter, validate({ body: signupS
+         chema }), authController.signup);
+     … +4 lines (ctrl+o to expand)
+
+● Write(backend\src\app.ts)
+  ⎿  Added 7 lines
+       1 +import cors from "cors";                                       
+       2  import express from "express";
+       3 +import helmet from "helmet";                                   
+       4 +import { config } from "./config";                             
+       5  import { errorHandler, notFoundHandler } from "./middleware/err
+          orHandler";
+       6 +import { authRoutes } from "./routes/authRoutes";              
+       7  
+       8  export const app = express();
+       9  
+      10 +app.use(helmet());                                             
+      11 +app.use(cors({ origin: config.CORS_ORIGINS }));                
+      12  app.use(express.json());
+      13  
+      14  app.get("/health", (_req, res) => {
+      15    res.json({ status: "ok" });
+      16  });
+      17 +app.use("/api/auth", authRoutes);                              
+      18  
+      19  app.use(notFoundHandler);
+      20  app.use(errorHandler);
+
+● Write(backend\vitest.config.ts)
+  ⎿  Wrote 15 lines to backend\vitest.config.ts
+       1 import { defineConfig } from "vitest/config";
+       2
+       3 export default defineConfig({
+       4   test: {
+       5     env: {
+       7       DATABASE_URL:
+       8         process.env.TEST_DATABASE_URL ?? "postgres://postgres:po
+         stgres@localhost:5433/task_tracker_test",
+       9       JWT_SECRET: "test-secret-test-secret-test-secret",
+      10       CORS_ORIGINS: "http://localhost:5173",
+     … +6 lines (ctrl+o to expand)
+
+● Write(backend\tests\setup.ts)
+  ⎿  Wrote 9 lines to backend\tests\setup.ts
+      1 import { afterAll, beforeAll, beforeEach } from "vitest";
+      2 import { pool } from "../src/db";
+      3 import { migrate } from "../src/db/migrate";
+      4
+      5 beforeAll(migrate);
+      6 beforeEach(async () => {
+      7   await pool.query("TRUNCATE users CASCADE");
+      8 });
+      9 afterAll(() => pool.end());
+
+● Write(backend\tests\helpers.ts)
+  ⎿  Wrote 9 lines to backend\tests\helpers.ts
+      1 import request from "supertest";
+      2 import { app } from "../src/app";
+      3
+      4 export const api = () => request(app);
+      5
+      7   const res = await api().post("/api/auth/signup").send({ name: "
+        User", email, password: "password123" });
+      8   return { token: res.body.token as string, auth: { Authorization
+        : `Bearer ${res.body.token}` } };
+      9 }
+     … +1 line (ctrl+o to expand)
+
+● Write(backend\tests\auth.test.ts)
+  ⎿  Wrote 43 lines to backend\tests\auth.test.ts
+       1 import { describe, expect, it } from "vitest";
+       3
+       4 const credentials = { email: "user@example.com", password: "pass
+         word123" };
+       6 describe("auth", () => {
+       7   it("signs up, then logs in with the same credentials", async (
+       8     const created = await api().post("/api/auth/signup").send({
+         name: "User", ...credentials });
+       9     expect(created.status).toBe(201);
+         l: credentials.email });
+     … +44 lines (ctrl+o to expand)
+
+● Update(backend\package.json)
+  ⎿  Added 1 line
+       7      "build": "tsc",
+       8      "start": "node dist/server.js",
+       9      "typecheck": "tsc --noEmit",
+      10 +    "test": "vitest run",                                      
+      11      "migrate": "tsx --env-file=.env src/db/migrate.ts",
+      12      "seed": "tsx --env-file=.env src/db/seed.ts"
+      13    },
+
+  Ran 3 shell commands (ctrl+o to expand)
+
+● Step 4 commit ho gaya (4 auth tests pass). Ab Step 5: tasks CRUD.
+
+● Write(backend\src\schemas\common.ts)
+  ⎿  Wrote 3 lines to backend\src\schemas\common.ts
+      1 import { z } from "zod";
+      2
+      3 export const idParamSchema = z.object({ id: z.uuid() });
+
+● Write(backend\src\schemas\task.ts)
+  ⎿  Wrote 21 lines to backend\src\schemas\task.ts
+      1 import { z } from "zod";
+      2
+      3 const title = z.string().trim().min(1).max(200);
+      4 const description = z.string().trim().max(2000);
+      5
+      6 export const createTaskSchema = z.object({
+      7   title,
+      8   description: description.default(""),
+      9 });
+     … +12 lines (ctrl+o to expand)
+
+● Write(backend\src\repositories\taskRepository.ts)
+  ⎿  Wrote 56 lines to backend\src\repositories\taskRepository.ts
+       1 import { pool } from "../db";
+       2 import type { CreateTaskInput, UpdateTaskInput } from "../schema
+         s/task";
+       3
+       4 export interface Task {
+       6   title: string;
+       7   description: string;
+       8   status: "todo" | "in_progress" | "done";
+       9   createdAt: Date;
+      10   updatedAt: Date;
+     … +54 lines (ctrl+o to expand)
+
+● Write(backend\src\services\taskService.ts)
+  ⎿  Wrote 24 lines to backend\src\services\taskService.ts
+       1 import { AppError } from "../errors";
+       2 import * as taskRepository from "../repositories/taskRepository"
+         ;
+         s/task";
+       4
+       5 const notFound = () => new AppError(404, "Task not found");
+       6
+       8 export const create = taskRepository.create;
+       9
+      10 export async function get(userId: string, id: string) {
+     … +16 lines (ctrl+o to expand)
+
+● Write(backend\src\controllers\taskController.ts)
+  ⎿  Wrote 23 lines to backend\src\controllers\taskController.ts
+       1 import type { RequestHandler } from "express";
+       2 import * as taskService from "../services/taskService";
+       3
+       4 export const create: RequestHandler = async (req, res) => {
+       5   res.status(201).json(await taskService.create(req.userId, req.
+       6 };
+       7
+       8 export const list: RequestHandler = async (req, res) => {
+       9   res.json(await taskService.list(req.userId));
+      10 };
+     … +18 lines (ctrl+o to expand)
+
+● Write(backend\src\routes\taskRoutes.ts)
+  ⎿  Wrote 15 lines to backend\src\routes\taskRoutes.ts
+      1 import { Router } from "express";
+      2 import * as taskController from "../controllers/taskController";
+      3 import { validate } from "../middleware/validate";
+      4 import { idParamSchema } from "../schemas/common";
+      5 import { createTaskSchema, updateTaskSchema } from "../schemas/ta
+        sk";
+      6
+      7 export const taskRoutes = Router();
+      8
+      9 const byId = validate({ params: idParamSchema });
+     … +8 lines (ctrl+o to expand)
+
+● Update(backend\src\app.ts)
+  ⎿  Added 1 line
+      15    res.json({ status: "ok" });
+      16  });
+      17  app.use("/api/auth", authRoutes);
+      18 +app.use("/api/tasks", authenticate, taskRoutes);               
+      19  
+      20  app.use(notFoundHandler);
+      21  app.use(errorHandler);
+
+● Update(backend\src\app.ts)
+  ⎿  Added 2 lines
+       2  import express from "express";
+       3  import helmet from "helmet";
+       4  import { config } from "./config";
+       5 +import { authenticate } from "./middleware/authenticate";      
+       6  import { errorHandler, notFoundHandler } from "./middleware/err
+          orHandler";
+       7  import { authRoutes } from "./routes/authRoutes";
+       8 +import { taskRoutes } from "./routes/taskRoutes";              
+       9  
+      10  export const app = express();
+      11  
+
+● Write(backend\tests\tasks.test.ts)
+  ⎿  Wrote 42 lines to backend\tests\tasks.test.ts
+       1 import { describe, expect, it } from "vitest";
+       2 import { api, signup } from "./helpers";
+       3
+       5   it("creates, lists, updates and deletes a task", async () => {
+       6     const { auth } = await signup();
+       7
+       8     const created = await api().post("/api/tasks").set(auth).sen
+       9     expect(created.status).toBe(201);
+      10     expect(created.body).toMatchObject({ title: "Write report",
+         description: "", status: "todo" });
+     … +44 lines (ctrl+o to expand)
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Step 5 commit ho gaya (7 tests pass). Ab Step 6: timer.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Update(backend\src\db\index.ts)
+  ⎿  Added 6 lines, removed 1 line
+       1 -import { Pool, PoolClient } from "pg";                         
+       1 +import { DatabaseError, Pool, PoolClient } from "pg";          
+       2  import { config } from "../config";
+       3  
+       4  export const pool = new Pool({ connectionString: config.DATABAS
+          E_URL });
+       5  
+       6 +const UNIQUE_VIOLATION = "23505";                              
+       7 +                                                               
+       8 +export const isUniqueViolation = (err: unknown) =>             
+       9 +  err instanceof DatabaseError && err.code === UNIQUE_VIOLATION
+         +;                                                              
+      10 +                                                               
+      11  export async function withTransaction<T>(work: (client: PoolCli
+          ent) => Promise<T>): Promise<T> {
+      12    const client = await pool.connect();
+      13    try {
+
+● Update(backend\src\services\authService.ts)
+  ⎿  Added 1 line, removed 1 line
+      1 -import { DatabaseError } from "pg";                             
+      1 +import { isUniqueViolation } from "../db";                      
+      2  import { AppError } from "../errors";
+      3  import * as userRepository from "../repositories/userRepository"
+         ;
+      4  import type { LoginInput, SignupInput } from "../schemas/auth";
+● Update(backend\src\services\authService.ts)
+  ⎿  Removed 2 lines
+       5  import { signToken } from "../utils/jwt";
+       6  import { hashPassword, verifyPassword } from "../utils/password
+          ";
+       7  
+       8 -const UNIQUE_VIOLATION = "23505";                              
+       9 -                                                               
+       8  export async function signup({ name, email, password }: SignupI
+          nput) {
+       9    const passwordHash = await hashPassword(password);
+      10    try {
+
+● Update(backend\src\services\authService.ts)
+  ⎿  Added 1 line, removed 4 lines
+      11      const user = await userRepository.create(name, email, passw
+          ordHash);
+      12      return { token: signToken(user.id), user };
+      13    } catch (err) {
+      14 -    if (err instanceof DatabaseError && err.code === UNIQUE_VIO
+         -LATION) {                                                      
+      15 -      throw new AppError(409, "Email is already registered");  
+      16 -    }                                                          
+      17 -    throw err;                                                 
+      14 +    throw isUniqueViolation(err) ? new AppError(409, "Email is 
+         +already registered") : err;                                    
+      15    }
+      16  }
+      17  
+
+● Ab timer ki repository, service, controller aur routes.
+
+● Write(backend\src\repositories\timeLogRepository.ts)
+  ⎿  Wrote 36 lines to backend\src\repositories\timeLogRepository.ts
+       1 import { pool } from "../db";
+       2
+       3 export interface TimeLog {
+       4   id: string;
+       5   taskId: string;
+       7   endedAt: Date | null;
+       8 }
+       9
+      10 const COLUMNS = 'id, task_id AS "taskId", started_at AS "started
+         At", ended_at AS "endedAt"';
+     … +29 lines (ctrl+o to expand)
+
+● Write(backend\src\services\timerService.ts)
+  ⎿  Wrote 21 lines to backend\src\services\timerService.ts
+       1 import { isUniqueViolation } from "../db";
+       2 import { AppError } from "../errors";
+         itory";
+       4
+       5 export async function start(userId: string, taskId: string) {
+         h((err) => {
+       7     throw isUniqueViolation(err) ? new AppError(409, "A timer is
+          already running") : err;
+       9   if (!log) throw new AppError(404, "Task not found");
+      10   return log;
+     … +15 lines (ctrl+o to expand)
+
+● Write(backend\src\controllers\timerController.ts)
+  ⎿  Wrote 14 lines to backend\src\controllers\timerController.ts
+       1 import type { RequestHandler } from "express";
+       2 import * as timerService from "../services/timerService";
+       3
+          res) => {
+       5   res.status(201).json(await timerService.start(req.userId, req.
+         params.id));
+       6 };
+       8 export const stop: RequestHandler = async (req, res) => {
+       9   res.json(await timerService.stop(req.userId));
+      10 };
+     … +6 lines (ctrl+o to expand)
+
+● Write(backend\src\routes\timerRoutes.ts)
+  ⎿  Wrote 7 lines to backend\src\routes\timerRoutes.ts
+      1 import { Router } from "express";
+      2 import * as timerController from "../controllers/timerController"
+        ;
+      3
+      4 export const timerRoutes = Router();
+      5
+      6 timerRoutes.post("/stop", timerController.stop);
+      7 timerRoutes.get("/active", timerController.active);
+
+● Update(backend\src\routes\taskRoutes.ts)
+  ⎿  Added 1 line
+      13  taskRoutes.get("/:id", byId, taskController.get);
+      14  taskRoutes.patch("/:id", validate({ params: idParamSchema, body
+          : updateTaskSchema }), taskController.update);
+      15  taskRoutes.delete("/:id", byId, taskController.remove);
+      16 +taskRoutes.post("/:id/timer/start", byId, timerController.start
+         +);                                                             
+
+● Update(backend\src\routes\taskRoutes.ts)
+  ⎿  Added 1 line
+      1  import { Router } from "express";
+      2  import * as taskController from "../controllers/taskController";
+      3 +import * as timerController from "../controllers/timerController
+        +";                                                              
+      4  import { validate } from "../middleware/validate";
+      5  import { idParamSchema } from "../schemas/common";
+      6  import { createTaskSchema, updateTaskSchema } from "../schemas/t
+         ask";
+
+● Update(backend\src\app.ts)
+  ⎿  Added 1 line
+      18  });
+      19  app.use("/api/auth", authRoutes);
+      20  app.use("/api/tasks", authenticate, taskRoutes);
+      21 +app.use("/api/timer", authenticate, timerRoutes);              
+      22  
+      23  app.use(notFoundHandler);
+      24  app.use(errorHandler);
+
+● Update(backend\src\app.ts)
+  ⎿  Added 1 line
+       6  import { errorHandler, notFoundHandler } from "./middleware/err
+          orHandler";
+       7  import { authRoutes } from "./routes/authRoutes";
+       8  import { taskRoutes } from "./routes/taskRoutes";
+       9 +import { timerRoutes } from "./routes/timerRoutes";            
+      10  
+      11  export const app = express();
+      12  
+
+● Update(backend\tests\helpers.ts)
+  ⎿  Added 7 lines
+       3  
+       4  export const api = () => request(app);
+       5  
+       6 +type Auth = { Authorization: string };                         
+       7 +                                                               
+       8 +export async function createTask(auth: Auth, title = "Task"): P
+         +romise<string> {                                               
+       9 +  const res = await api().post("/api/tasks").set(auth).send({ t
+         +itle });                                                       
+      10 +  return res.body.id;                                          
+      11 +}                                                              
+      12 +                                                               
+      13  export async function signup(email = "user@example.com") {
+      14    const res = await api().post("/api/auth/signup").send({ name:
+           "User", email, password: "password123" });
+      15    return { token: res.body.token as string, auth: { Authorizati
+          on: `Bearer ${res.body.token}` } };
+
+● Write(backend\tests\timer.test.ts)
+  ⎿  Wrote 54 lines to backend\tests\timer.test.ts
+       1 import { describe, expect, it } from "vitest";
+       2 import { api, createTask, signup } from "./helpers";
+       4 const start = (auth: { Authorization: string }, taskId: string)
+         =>
+       5   api().post(`/api/tasks/${taskId}/timer/start`).set(auth);
+       7 describe("timer", () => {
+       8   it("runs one active timer per user, even under concurrent star
+         ts", async () => {
+      10     const [a, b] = [await createTask(auth, "A"), await createTas
+         k(auth, "B")];
+     … +55 lines (ctrl+o to expand)
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Galti meri: maine test-failure ke baad bhi commit chala diya (grep ke saath
+  chain kiya tha). Pehle failure dekhta hoon, phir commit theek karunga.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Ab pass hua, yaani flaky hai. Kai baar chala ke dekhta hoon kaun sa test aur
+  kyun.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Ye asli bug tha - app clock aur DB clock ke beech 5ms ka mismatch elapsed ko
+  negative bana raha tha. Ab main now ko active timer wali query mein hi DB se
+  fetch karunga taaki dono ek hi clock se aayein. · summary
+
+● Update(backend\src\repositories\timeLogRepository.ts)
+  ⎿  Added 2 lines, removed 2 lines
+      28  }
+      29  
+      30  export async function findActive(userId: string) {
+      31 -  const { rows } = await pool.query<TimeLog>(                  
+      32 -    `SELECT ${COLUMNS} FROM time_logs WHERE user_id = $1 AND en
+         -ded_at IS NULL`,                                               
+      31 +  const { rows } = await pool.query<TimeLog & { now: Date }>(  
+      32 +    `SELECT ${COLUMNS}, now() FROM time_logs WHERE user_id = $1
+         + AND ended_at IS NULL`,                                        
+      33      [userId],
+      34    );
+      35    return rows[0];
+
+● Update(backend\src\services\timerService.ts)
+  ⎿  Added 4 lines, removed 1 line
+      17  }
+      18  
+      19  export async function getActive(userId: string) {
+      20 -  return { timeLog: (await timeLogRepository.findActive(userId)
+         -) ?? null, now: new Date() };                                  
+      20 +  const active = await timeLogRepository.findActive(userId);   
+      21 +  if (!active) return { timeLog: null, now: new Date() };      
+      22 +  const { now, ...timeLog } = active;                          
+      23 +  return { timeLog, now };                                     
+      24  }
+
+● Update(backend\src\repositories\timeLogRepository.ts)
+  ⎿  Added 1 line
+      27    return rows[0];
+      28  }
+      29  
+      30 +// now() comes from the DB so elapsed time uses the same clock 
+         +as started_at.                                                 
+      31  export async function findActive(userId: string) {
+      32    const { rows } = await pool.query<TimeLog & { now: Date }>(
+      33      `SELECT ${COLUMNS}, now() FROM time_logs WHERE user_id = $1
+           AND ended_at IS NULL`,
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● 20 baar loop mein bhi pass. Jo commit galti se failing state mein gaya tha,
+  use amend karke theek kar raha hoon (abhi tak kuch push nahi hua hai).
+
+  Ran 2 shell commands (ctrl+o to expand)
+● PLAN.md mein frontend agent ne apne steps tick kiye hain. Usse chhoonga nahi,
+  aur apne commits mein sirf apni line stage karunga. Ab Step 7: daily summary.
+
+● Write(backend\src\schemas\summary.ts)
+  ⎿  Wrote 12 lines to backend\src\schemas\summary.ts
+       1 import { z } from "zod";
+       2
+       3 const timestamp = z.iso.datetime({ offset: true });
+       4
+       5 export const summaryQuerySchema = z
+       7   .refine((range) => Date.parse(range.from) < Date.parse(range.t
+         o), {
+       8     message: "to must be after from",
+       9     path: ["to"],
+      10   });
+     … +3 lines (ctrl+o to expand)
+
+● Update(backend\src\repositories\timeLogRepository.ts)
+  ⎿  Added 19 lines
+      27    return rows[0];
+      28  }
+      29  
+      30 +// Logs are clipped to [from, to]; a running timer counts up to
+         + now().                                                        
+      31 +export async function sumSecondsByTask(userId: string, from: st
+         +ring, to: string) {                                            
+      32 +  const { rows } = await pool.query<{ taskId: string; title: st
+         +ring; seconds: number }>(                                      
+      33 +    `SELECT t.id AS "taskId", t.title,                         
+      34 +            round(sum(extract(epoch FROM                       
+      35 +              least(coalesce(l.ended_at, now()), $3::timestampt
+         +z) - greatest(l.started_at, $2::timestamptz)                   
+      36 +            )))::int AS seconds                                
+      37 +       FROM time_logs l                                        
+      38 +       JOIN tasks t ON t.id = l.task_id                        
+      39 +      WHERE l.user_id = $1                                     
+      40 +        AND l.started_at < $3::timestamptz                     
+      41 +        AND coalesce(l.ended_at, now()) > $2::timestamptz      
+      42 +      GROUP BY t.id, t.title                                   
+      43 +      ORDER BY seconds DESC`,                                  
+      44 +    [userId, from, to],                                        
+      45 +  );                                                           
+      46 +  return rows;                                                 
+      47 +}                                                              
+      48 +                                                               
+      49  // now() comes from the DB so elapsed time uses the same clock 
+          as started_at.
+      50  export async function findActive(userId: string) {
+      51    const { rows } = await pool.query<TimeLog & { now: Date }>(
+
+● Write(backend\src\services\summaryService.ts)
+  ⎿  Wrote 7 lines to backend\src\services\summaryService.ts
+      1 import * as timeLogRepository from "../repositories/timeLogReposi
+        tory";
+      2 import type { SummaryQuery } from "../schemas/summary";
+      3
+      4 export async function getSummary(userId: string, { from, to }: Su
+      5   const tasks = await timeLogRepository.sumSecondsByTask(userId,
+        from, to);
+      6   return { totalSeconds: tasks.reduce((total, task) => total + ta
+        sk.seconds, 0), tasks };
+      7 }
+     … +1 line (ctrl+o to expand)
+
+● Write(backend\src\controllers\summaryController.ts)
+  ⎿  Wrote 6 lines to backend\src\controllers\summaryController.ts
+      1 import type { RequestHandler } from "express";
+      2 import * as summaryService from "../services/summaryService";
+      3
+      4 export const get: RequestHandler = async (req, res) => {
+      5   res.json(await summaryService.getSummary(req.userId, req.query
+        as never));
+      6 };
+
+● Write(backend\src\controllers\summaryController.ts)
+  ⎿  Added 3 lines, removed 2 lines
+      1  import type { RequestHandler } from "express";
+      2 +import type { SummaryQuery } from "../schemas/summary";         
+      3  import * as summaryService from "../services/summaryService";
+      4  
+      4 -export const get: RequestHandler = async (req, res) => {        
+      5 -  res.json(await summaryService.getSummary(req.userId, req.query
+        - as never));                                                    
+      5 +export const get: RequestHandler<unknown, unknown, unknown, Summ
+        +aryQuery> = async (req, res) => {                               
+      6 +  res.json(await summaryService.getSummary(req.userId, req.query
+        +));                                                             
+      7  };
+
+● Write(backend\src\routes\summaryRoutes.ts)
+  ⎿  Wrote 8 lines to backend\src\routes\summaryRoutes.ts
+      1 import { Router } from "express";
+      2 import * as summaryController from "../controllers/summaryControl
+        ler";
+      3 import { validate } from "../middleware/validate";
+      4 import { summaryQuerySchema } from "../schemas/summary";
+      5
+      6 export const summaryRoutes = Router();
+      7
+      8 summaryRoutes.get("/", validate({ query: summaryQuerySchema }), s
+        ummaryController.get);
+
+● Update(backend\src\app.ts)
+  ⎿  Added 1 line
+      20  app.use("/api/auth", authRoutes);
+      21  app.use("/api/tasks", authenticate, taskRoutes);
+      22  app.use("/api/timer", authenticate, timerRoutes);
+      23 +app.use("/api/summary", authenticate, summaryRoutes);          
+      24  
+      25  app.use(notFoundHandler);
+      26  app.use(errorHandler);
+
+● Update(backend\src\app.ts)
+  ⎿  Added 1 line
+       5  import { authenticate } from "./middleware/authenticate";
+       6  import { errorHandler, notFoundHandler } from "./middleware/err
+          orHandler";
+       7  import { authRoutes } from "./routes/authRoutes";
+       8 +import { summaryRoutes } from "./routes/summaryRoutes";        
+       9  import { taskRoutes } from "./routes/taskRoutes";
+      10  import { timerRoutes } from "./routes/timerRoutes";
+      11  
+
+● Write(backend\tests\summary.test.ts)
+  ⎿  Wrote 68 lines to backend\tests\summary.test.ts
+       1 import { describe, expect, it } from "vitest";
+       2 import { pool } from "../src/db";
+       3 import { api, createTask, signup } from "./helpers";
+       5 const log = (taskId: string, userId: string, startedAt: string,
+         endedAt: string | null) =>
+       6   pool.query("INSERT INTO time_logs (user_id, task_id, started_a
+         t, ended_at) VALUES ($1, $2, $3, $4)", [
+       8     taskId,
+       9     startedAt,
+      10     endedAt,
+     … +75 lines (ctrl+o to expand)
+
+● Mere expected numbers mein arithmetic gadbad thi. Sahi math: design =
+  3600+1800 = 5400, review = 1800 (clipped start) + 1800 (clipped end) = 3600,
+  total 9000. Theek karta hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● 14/14 pass. Commit mein sirf meri PLAN.md line stage kar raha hoon, frontend
+  agent ke ticks working tree mein rahenge.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Frontend agent ne beech mein apne commits kar diye hain, aur ab sirf meri
+  step-7 tick missing hai PLAN.md mein — ise HEAD se sync kar raha hoon bina
+  kisi ka kaam khoye. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Step 8 se pehle dekh leta hoon ki frontend suggest endpoint ko kaise call
+  karta hai, taaki contract se mismatch na ho (sirf padh raha hoon).
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Skill(claude-api)
+  ⎿  Successfully loaded skill · 1 tool allowed
+
+  Searched for 1 pattern, read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● Koi API key nahi hai, isliye live call verify nahi ho paayegi. Code likh raha
+  hoon, aur key na ho to endpoint 503 dega (plan ke mutabiq "optional").
+
+● Write(backend\src\services\suggestionService.ts)
+  ⎿  Wrote 30 lines to backend\src\services\suggestionService.ts
+       1 import Anthropic from "@anthropic-ai/sdk";
+       2 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
+       3 import { z } from "zod";
+       5 import { AppError } from "../errors";
+       6
+       7 const suggestionSchema = z.object({ title: z.string(), descripti
+         on: z.string() });
+       9 const SYSTEM_PROMPT =
+      10   "Turn a rough task note into a clear task. Give a specific tit
+         le of at most 10 words and a one or two " +
+     … +26 lines (ctrl+o to expand)
+
+● Update(backend\src\config.ts)
+  ⎿  Added 1 line
+       6    DATABASE_URL: z.url(),
+       7    JWT_SECRET: z.string().min(32),
+       8    JWT_EXPIRES_IN_SECONDS: z.coerce.number().int().positive().de
+          fault(3600),
+       9 +  ANTHROPIC_API_KEY: z.string().min(1).optional(),             
+      10    CORS_ORIGINS: z.string().transform((list) => list.split(",").
+          map((origin) => origin.trim())),
+      11  });
+      12  
+
+● Update(backend\src\schemas\task.ts)
+  ⎿  Added 2 lines
+      17    .partial()
+      18    .refine((patch) => Object.keys(patch).length > 0, "At least o
+          ne field is required");
+      19  
+      20 +export const suggestTaskSchema = z.object({ input: z.string().t
+         +rim().min(1).max(500) });                                      
+      21 +                                                               
+      22  export type CreateTaskInput = z.infer<typeof createTaskSchema>;
+      23  export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
+
+● Update(backend\src\controllers\taskController.ts)
+  ⎿  Added 5 lines
+       1  import type { RequestHandler } from "express";
+       2 +import * as suggestionService from "../services/suggestionServi
+         +ce";                                                           
+       3  import * as taskService from "../services/taskService";
+       4  
+       5 +export const suggest: RequestHandler = async (req, res) => {   
+       6 +  res.json(await suggestionService.suggest(req.body.input));   
+       7 +};                                                             
+       8 +                                                               
+       9  export const create: RequestHandler = async (req, res) => {
+      10    res.status(201).json(await taskService.create(req.userId, req
+          .body));
+      11  };
+
+● Update(backend\src\routes\taskRoutes.ts)  ⎿  Added 1 line
+      10  const byId = validate({ params: idParamSchema });
+      11  
+      12  taskRoutes.post("/", validate({ body: createTaskSchema }), task
+          Controller.create);
+      13 +taskRoutes.post("/suggest", validate({ body: suggestTaskSchema 
+         +}), taskController.suggest);                                   
+      14  taskRoutes.get("/", taskController.list);
+      15  taskRoutes.get("/:id", byId, taskController.get);
+      16  taskRoutes.patch("/:id", validate({ params: idParamSchema, body
+          : updateTaskSchema }), taskController.update);
+
+● Update(backend\src\routes\taskRoutes.ts)
+  ⎿  Added 1 line, removed 1 line
+      3  import * as timerController from "../controllers/timerController
+         ";
+      4  import { validate } from "../middleware/validate";
+      5  import { idParamSchema } from "../schemas/common";
+      6 -import { createTaskSchema, updateTaskSchema } from "../schemas/t
+        -ask";                                                           
+      6 +import { createTaskSchema, suggestTaskSchema, updateTaskSchema }
+        + from "../schemas/task";                                        
+      7  
+      8  export const taskRoutes = Router();
+      9  
+
+  Ran 4 shell commands (ctrl+o to expand)
+
+● Backend ke steps 1 se 8 ho gaye. Typecheck saaf hai aur 15 integration tests
+  pass hain, lekin Claude ki live call abhi tak test nahi hui. Saare commits
+  conventional-style mein hain, frontend/ ko maine chhua nahi.
+
+  Live call unverified: is machine pe ANTHROPIC_API_KEY nahi hai. Key na ho to
+  /api/tasks/suggest 503 deta hai, ye test kiya hai. Key daalke ek baar asli
+  call chala lena.
+
+  Ek galti: maine ek timer commit failing test ke saath kiya tha. Test ne asli
+  bug pakda: now app ke clock se aa raha tha aur startedAt DB ke clock se, toh
+  elapsed negative ho sakta tha. Ab now DB se usi query mein aata hai. Timer
+  tests 20 baar loop mein pass hue. Commit unpushed tha, isliye maine use amend
+  kar diya.
+
+  Jahan maine teri spec se alag kiya, kyunki contract freeze tha. Tu bata kya
+  karna hai:
+  1. Summary timezone: maine from aur to (offset wale ISO timestamps) rakhe,
+     tera timezone query param nahi liya. Client local din ke bounds bhejta hai,
+     toh UTC assume nahi hota aur frontend contract se sync rahta hai. IST wale
+     din ka test bhi hai. IANA tz param chahiye to bata, contract badalna
+     padega.
+  2. Stop pe 409: contract mein "active timer nahi hai to 404" likha hai, isliye
+     maine 404 rakha. Tu 409 chahta hai to ek line ka change hai, lekin
+     frontend agent ko batana hoga.
+  3. Transactions: start, stop aur delete har ek single atomic statement hai
+     (INSERT...SELECT, UPDATE, DELETE with cascade). Race DB ka partial unique
+     index sambhalta hai, aur concurrent-start test se verify hua. Zabardasti ka
+     transaction add karna ceremony hota, isliye nahi kiya.
+  4. Naye error codes: contract ki list mein nahi the, lekin add hue: 429 (auth
+     rate limit), 502/503 (AI suggestion). Route shapes nahi badle. GET /health
+     bhi add hua hai.
+
+  Dhyan rakhne wali baatein:
+  - JWT expiry 1 ghanta hai, refresh token nahi. Frontend ko 401 pe login pe
+    bhejna hoga.
+  - Suggestion model claude-opus-5-5 hai (claude-api skill ka default). Sasta
+    chahiye to claude-haiku-4-5 ek line mein lag jayega.
+  - Suggest endpoint pe per-user limit nahi hai, toh logged-in user kharcha
+    badha sakta hai. Chahe to add kar dunga.
+  - Rate limiter ke liye deploy pe trust proxy set karna padega, wo step 15 mein
+    hoga.
+  - Local Postgres Docker container task-tracker-db (port 5433) hai, dev DB
+    task_tracker aur test DB task_tracker_test. Seed user: test@example.com /
+    password123.
+
+  Tera "go" sirf steps 1 se 8 ke liye tha, isliye yahan ruk gaya hoon. Next
+  steps 15 se 17 (deploy, README, final cleanup) hain. Bolega to shuru karun,
+  deploy target (Neon/Render/Vercel) bhi bata dena.
+
+> <ide_opened_file>The user opened the file c:\Users\Mohammad
+  Tabish\Documents\Shared from ubuntu\task-tracker\backend\src\server.ts in the
+  IDE. This may or may not be related to the current task.</ide_opened_file>
+
+> Review kar liya, achha kaam hai. Timer mein jo bug pakda (app clock vs DB
+  clock se negative elapsed) wo sahi catch tha, aur fix bhi sahi jagah pe hai.
+  Decisions:
+
+  Approved as-is:
+  1. Summary ke liye from/to (offset wale ISO timestamps). Client ke local day
+  bounds se timezone ka sawaal hi khatam ho jata hai. IANA tz param nahi
+  chahiye.
+  2. Stop pe active timer na ho toh 404, contract wala hi rakh. Frontend
+  already usi pe bana hai, churn nahi chahiye.
+  3. Single atomic statements transaction se better hain, aur partial unique
+  index race handle karta hai. Theek hai.
+  4. 429, 502/503 aur GET /health ko PLAN.md ke error table mein document kar
+  de.
+
+  Changes chahiye, is order mein:
+
+  A. Contract change (ek hi, frontend is pe blocked hai): GET /time-logs add
+  kar. Assignment mein "view all time logs" required hai aur abhi sirf daily
+  per-task totals milte hain.
+  - Query params (Zod se validate): from, to (ISO with offset, optional),
+  taskId (optional), limit (default 50, max 200), offset (default 0).
+  - Response item: id, taskId, taskTitle, startedAt, endedAt (null agar
+  active), durationSeconds (server pe derive, active ke liye DB now() se).
+  - Order: startedAt DESC. Ownership-scoped query (WHERE user_id), cross-user
+  taskId pe empty list ya 404, leak nahi.
+  - Ek integration test: user A ke logs user B ko nahi dikhte, aur active log
+  endedAt null ke saath aata hai.
+  - PLAN.md ke API contract mein shape update kar, phir mujhe bata, main
+  frontend agent ko bolunga.
+
+  B. JWT expiry env var se configurable bana (JWT_EXPIRES_IN), default 24h. 1h
+  pe reviewer demo ke beech mein logout ho sakta hai. Refresh token mat add
+  kar, over-engineering hai.
+
+  C. Suggest endpoint:
+  - Model ko env var bana (AI_MODEL), default claude-haiku-4-5-20251001.
+  Title/description rewrite ke liye Opus overkill hai aur kharcha badhata hai.
+  - Per-user rate limit laga (jaise 10 req/min) aur input length ko Zod se cap
+  kar (jaise 200 chars). Public deploy pe mera API key hai, cost abuse nahi
+  chahiye. Chhota rakhna, extra infra nahi.
+
+  Phir steps 15 se 17 ke liye go:
+  - Deploy: Postgres Neon pe, backend Render pe, frontend Vercel pe.
+  - Backend prod config: trust proxy, CORS allowlist sirf Vercel origin,
+  migrations deploy/start pe chalein, sab config env vars se (koi secret repo
+  mein nahi). Prod DB mein seed test user bhi bana (README mein credentials).
+  - Frontend ke liye VITE_API_URL env aur Vercel pe SPA rewrite (deep links pe
+  404 na aaye). Ye frontend/ ki files hain, toh sirf config-level changes kar
+  aur unhe alag commit mein rakh, baaki kuch touch mat kar.
+  - README: setup steps, tech stack (short), live link, test credentials, env
+  vars ki list, API overview, aur ek line Render free tier cold start ke baare
+  mein. Screenshots baad mein main daal dunga.
+  - Final cleanup: unused deps, dead code, leftover TODOs check kar aur npm
+  audit chala.
+
+  Har step ke baad tests chala aur focused conventional commit kar. Amend sirf
+  unpushed commits pe, push ke baad history rewrite nahi. Deploy ke liye jahan
+  mera kuch karna ho (Neon/Render/Vercel account, env vars) wahan ruk ke mujhe
+  exact steps bata.
+
+  Read 1 file (ctrl+o to expand)
+
+● Shuru karte hain A se: GET /time-logs.
+
+● Write(backend\src\schemas\timeLog.ts)
+  ⎿  Wrote 18 lines to backend\src\schemas\timeLog.ts
+       1 import { z } from "zod";
+       2
+       3 const timestamp = z.iso.datetime({ offset: true });
+       4
+       5 export const listTimeLogsQuerySchema = z
+       6   .object({
+       7     from: timestamp.optional(),
+       8     to: timestamp.optional(),
+       9     taskId: z.uuid().optional(),
+      10     limit: z.coerce.number().int().min(1).max(200).default(50),
+     … +10 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(backend\src\repositories\timeLogRepository.ts)
+  ⎿  Added 23 lines
+       7    endedAt: Date | null;
+       8  }
+       9  
+      10 +export interface TimeLogEntry extends TimeLog {                
+      11 +  taskTitle: string;                                           
+      12 +  durationSeconds: number;                                     
+      13 +}                                                              
+      14 +                                                               
+      15  const COLUMNS = 'id, task_id AS "taskId", started_at AS "starte
+          dAt", ended_at AS "endedAt"';
+      16  
+      17 +export async function list(userId: string, { from, to, taskId, 
+         +limit, offset }: ListTimeLogsQuery) {                          
+      18 +  const { rows } = await pool.query<TimeLogEntry>(             
+      19 +    `SELECT l.id, l.task_id AS "taskId", t.title AS "taskTitle"
+         +,                                                              
+      20 +            l.started_at AS "startedAt", l.ended_at AS "endedAt
+         +",                                                             
+      21 +            round(extract(epoch FROM coalesce(l.ended_at, now()
+         +) - l.started_at))::int AS "durationSeconds"                   
+      22 +       FROM time_logs l                                        
+      23 +       JOIN tasks t ON t.id = l.task_id                        
+      24 +      WHERE l.user_id = $1                                     
+      25 +        AND ($2::timestamptz IS NULL OR l.started_at >= $2)    
+      26 +        AND ($3::timestamptz IS NULL OR l.started_at < $3)     
+      27 +        AND ($4::uuid IS NULL OR l.task_id = $4)               
+      28 +      ORDER BY l.started_at DESC                               
+      29 +      LIMIT $5 OFFSET $6`,                                     
+      30 +    [userId, from, to, taskId, limit, offset],                 
+      31 +  );                                                           
+      32 +  return rows;                                                 
+      33 +}                                                              
+      34 +                                                               
+      35  export async function start(userId: string, taskId: string) {
+      36    const { rows } = await pool.query<TimeLog>(
+      37      `INSERT INTO time_logs (user_id, task_id)
+
+● Update(backend\src\repositories\timeLogRepository.ts)
+  ⎿  Added 1 line
+      1  import { pool } from "../db";
+      2 +import type { ListTimeLogsQuery } from "../schemas/timeLog";    
+      3  
+      4  export interface TimeLog {
+      5    id: string;
+
+● Write(backend\src\services\timeLogService.ts)
+  ⎿  Wrote 3 lines to backend\src\services\timeLogService.ts
+      1 import * as timeLogRepository from "../repositories/timeLogReposi
+        tory";
+      2
+      3 export const list = timeLogRepository.list;
+
+● Write(backend\src\controllers\timeLogController.ts)
+  ⎿  Wrote 7 lines to backend\src\controllers\timeLogController.ts
+      1 import type { RequestHandler } from "express";
+      2 import type { ListTimeLogsQuery } from "../schemas/timeLog";
+      3 import * as timeLogService from "../services/timeLogService";
+      4
+      5 export const list: RequestHandler<unknown, unknown, unknown, List
+        TimeLogsQuery> = async (req, res) => {
+      6   res.json(await timeLogService.list(req.userId, req.query));
+      7 };
+
+● Write(backend\src\routes\timeLogRoutes.ts)
+  ⎿  Wrote 8 lines to backend\src\routes\timeLogRoutes.ts
+      1 import { Router } from "express";
+      2 import * as timeLogController from "../controllers/timeLogControl
+        ler";
+      3 import { validate } from "../middleware/validate";
+      4 import { listTimeLogsQuerySchema } from "../schemas/timeLog";
+      5
+      6 export const timeLogRoutes = Router();
+      7
+      8 timeLogRoutes.get("/", validate({ query: listTimeLogsQuerySchema
+        }), timeLogController.list);
+
+● Update(backend\src\app.ts)
+  ⎿  Added 1 line
+      22  app.use("/api/tasks", authenticate, taskRoutes);
+      23  app.use("/api/timer", authenticate, timerRoutes);
+      24  app.use("/api/summary", authenticate, summaryRoutes);
+      25 +app.use("/api/time-logs", authenticate, timeLogRoutes);        
+      26  
+      27  app.use(notFoundHandler);
+      28  app.use(errorHandler);
+
+● Update(backend\src\app.ts)
+  ⎿  Added 1 line
+       7  import { authRoutes } from "./routes/authRoutes";
+       8  import { summaryRoutes } from "./routes/summaryRoutes";
+       9  import { taskRoutes } from "./routes/taskRoutes";
+      10 +import { timeLogRoutes } from "./routes/timeLogRoutes";        
+      11  import { timerRoutes } from "./routes/timerRoutes";
+      12  
+      13  export const app = express();
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Write(backend\src\controllers\timeLogController.ts)
+  ⎿  Added 3 lines, removed 2 lines
+      2  import type { ListTimeLogsQuery } from "../schemas/timeLog";
+      3  import * as timeLogService from "../services/timeLogService";
+      4  
+      5 -export const list: RequestHandler<unknown, unknown, unknown, Lis
+        -tTimeLogsQuery> = async (req, res) => {                         
+      6 -  res.json(await timeLogService.list(req.userId, req.query));   
+      5 +export const list: RequestHandler = async (req, res) => {       
+      6 +  // validate() has already replaced req.query with the parsed (
+        +number-coerced) value.                                          
+      7 +  res.json(await timeLogService.list(req.userId, req.query as un
+        +known as ListTimeLogsQuery));                                   
+      8  };
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Ab PLAN.md mein contract aur error table update karta hoon.
+
+● Update(PLAN.md)
+  ⎿  Added 3 lines, removed 1 line
+      40  Base path `/api`. JSON everywhere. All routes except signup/log
+          in need `Authorization: Bearer <token>`.
+      41  
+      42  **Error shape** (all errors): `{ "error": { "message": string, 
+          "details"?: object } }`
+      43 -Statuses: `400` validation, `401` missing/invalid token or bad 
+         -credentials, `404` not found (or not yours), `409` conflict, `5
+         -00` unexpected.                                                
+      43 +Statuses: `400` validation, `401` missing/invalid token or bad 
+         +credentials, `404` not found (or not yours), `409` conflict, `4
+         +29` rate limited (auth routes, `POST /tasks/suggest`), `500` un
+         +expected, `502` AI provider failed, `503` AI suggestions not co
+         +nfigured (no API key).                                         
+      44  
+      45 +`GET /health` (outside `/api`, no auth) returns `200 { status: 
+         +"ok" }` for uptime checks.                                     
+      46 +                                                               
+      47  **Types**
+      48  ```
+      49  User    { id, name, email }
+
+● Update(PLAN.md)
+  ⎿  Added 1 line
+      49  User    { id, name, email }
+      50  Task    { id, title, description, status, createdAt, updatedAt 
+          }
+      51  TimeLog { id, taskId, startedAt, endedAt: string | null }
+      52 +TimeLogEntry { id, taskId, taskTitle, startedAt, endedAt: strin
+         +g | null, durationSeconds }                                    
+      53  ```
+      54  
+      55  ### Auth
+
+● Update(PLAN.md)
+  ⎿  Added 7 lines
+      85  
+      86  A running timer counts up to the request time; logs are clipped
+           to `[from, to]`.
+      87  
+      88 +### Time logs                                                  
+      89 +| Route | Query (all optional) | Success |                     
+      90 +|---|---|---|                                                  
+      91 +| `GET /time-logs` | `from`, `to` (ISO with offset; logs that *
+         +started* in `[from, to)`), `taskId` (uuid), `limit` (1–200, def
+         +ault 50), `offset` (default 0) | `200 TimeLogEntry[]` (newest `
+         +startedAt` first) |                                            
+      92 +                                                               
+      93 +`durationSeconds` is derived on the server; for a running timer
+         + (`endedAt: null`) it counts up to the DB's `now()`. Only the c
+         +aller's logs are ever returned, so another user's `taskId` yiel
+         +ds `[]`.                                                       
+      94 +                                                               
+      95  ## Open questions
+      96  - Deployment targets (suggestion: Neon/Supabase Postgres, Rende
+          r backend, Vercel frontend).
+
+● Update(GOAL.md)
+  ⎿  Added 1 line
+      26  - [ ] Timer is real-time in the UI and survives page refresh (c
+          omputed from a server-stored start timestamp)
+      27  - [ ] One active timer per user
+      28  - [ ] Time logs stored per task
+      29 +- [ ] View all time logs                                       
+      30  
+      31  ### 4. Daily summary
+      32  - [ ] Total time tracked for a day
+
+  Ran 1 shell command (ctrl+o to expand)
+● A (time-logs) commit ho gaya: 8e45e97. Contract PLAN.md mein update hai, tu
+  frontend agent ko bata sakta hai. Ab B (JWT expiry env).
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Mujhe regex bug mil gaya — sed ne \d ka backslash hata diya tha, jisse "24h"
+  jaisi valid value reject ho rahi thi. Ab ise fix karke unpushed commit amend
+  karunga aur value verify karunga. · summary
+
+● Update(backend\src\config.ts)
+  ⎿  Added 1 line, removed 1 line
+       5    PORT: z.coerce.number().int().positive().default(4000),
+       6    DATABASE_URL: z.url(),
+       7    JWT_SECRET: z.string().min(32),
+       8 -  JWT_EXPIRES_IN: z.string().regex(/^d+[smhd]$/, "use a duratio
+         -n like 24h").default("24h"),                                   
+       8 +  JWT_EXPIRES_IN: z.string().regex(/^\d+[smhd]$/, "use a durati
+         +on like 24h").default("24h"),                                  
+       9    ANTHROPIC_API_KEY: z.string().min(1).optional(),
+      10    CORS_ORIGINS: z.string().transform((list) => list.split(",").
+          map((origin) => origin.trim())),
+      11  });
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Sab reject ho raha hai, toh shayad mera test harness galat hai. Error print
+  karke dekhta hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Ab sahi verify hua: 2h, 24h, 90m accept; "1 hour" aur "abc" reject; default
+  24h ka token 86400s ka hai. Amend kar raha hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Ab C: suggest endpoint ka cost control.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● A, B, C teeno commit ho gaye. Ab deploy prep. Pehle frontend ka config dekhta
+  hoon (sirf padhna), ki API URL abhi kaise set hai.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Frontend pehle se VITE_API_URL support karta hai aur uska dev proxy port 3000
+  pe point karta hai, toh bina frontend chhedein backend ka default port 3000
+  kar deta hoon. Ab prod config dekhta hoon. · summary
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Production build ko locally asli tarike se chalake dekhta hoon: npm start
+  (migrate, phir server), CORS allowlist, login.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Ab frontend ka config, alag commit mein. Sirf ek naya vercel.json, baaki kuch
+  nahi.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Classifier transient error tha, same command dobara chala raha hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Ab final cleanup: unused deps, TODOs, audit.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Backend mein 4 interfaces export hain par sirf apni file mein use hoti hain.
+  Unka export hata deta hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Cleanup commit ho gaya — audit, TODOs, aur depcheck sab clean nikle. Ab README
+  likhta hoon, live URLs deploy ke baad add karke commit karunga. · summary
+
+● Write(README.md)
+  ⎿  Wrote 95 lines to README.md
+       1 # Task Tracker
+       3 A task and time tracking app: create tasks (with optional AI-sug
+         gested titles and descriptions), run a real-time timer per task,
+          browse time logs, and see a daily productivity summary.
+       5 - **App:** FRONTEND_URL
+       6 - **API:** BACKEND_URL (`GET /health`)
+       8 **Test account:** `test@example.com` / `password123`
+       9
+      10 > The API runs on Render's free tier, so the first request after
+         e wakes up.
+     … +120 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● A, B, C, prod config aur cleanup ho gaye. Ab deploy mein mujhe tere accounts
+  chahiye, isliye yahin ruk gaya hoon. Backend ke 20 tests pass hain, npm audit
+  backend aur frontend dono pe 0 vulnerabilities dikhata hai, aur frontend build
+  ho raha hai.
+
+  Jo ho gaya
+
+  - A, GET /time-logs: 8e45e97. Contract aur error table PLAN.md mein update
+    hain (TimeLogEntry, 429/502/503, /health). Ye frontend agent ko bata sakta
+    hai. Doosre user ka taskId dene pe empty list aati hai.
+  - B, JWT_EXPIRES_IN: 7df70fb, default 24h. Pehle commit mein regex galat tha
+    aur sirf default ke through test pass hua tha. Amend kiya, aur ab 2h/24h/90m
+    accept hote hain, "1 hour" reject hota hai, token 86400s ka banta hai.
+  - C, suggest endpoint: c8ff631. AI_MODEL default Haiku 4.5, 10 requests/min
+    per user, input max 200 chars. Limiter ka test bhi hai.
+  - Prod config: 112a8a7 mein trust proxy, npm start pe migrate phir server, aur
+    render.yaml. npm start local pe chalake dekha: health 200, login 200, sirf
+    allowlist wala origin CORS header pata hai. Backend ka default PORT 3000 kar
+    diya, taaki frontend ki dev proxy bina badlaav ke chale.
+  - Frontend: vercel.json (SPA rewrite) alag commit mein hai, baaki kuch touch
+    nahi kiya. VITE_API_URL pehle se supported hai.
+  - Cleanup: 43a56c0. depcheck saaf, koi TODO ya console.log nahi, 4 faltu
+    exports hata diye.
+  - README.md likha hai par commit nahi kiya. Usme FRONTEND_URL aur BACKEND_URL
+    placeholders hain, deploy ke baad bharunga.
+
+  Jo tujhe karna hai (is order mein)
+
+  0. GitHub: abhi koi remote nahi hai. Empty repo banake:
+  git remote add origin https://github.com/<you>/<repo>.git
+  git push -u origin main
+     Chahe to repo URL bhej de, main push kar dunga.
+  1. Neon: neon.tech pe project banao, direct connection string copy karo
+     (?sslmode=require ke saath).
+  2. Render: New → Blueprint → repo chuno. render.yaml padh ke ye pooch-ta hai:
+     - DATABASE_URL: Neon wali string.
+     - CORS_ORIGINS: abhi http://localhost:5173 daal do.
+     - ANTHROPIC_API_KEY: teri key.
+     - JWT_SECRET Render khud generate karta hai.
+
+     Deploy ke logs mein "Applied 001_init.sql" aur "Listening" dikhna chahiye.
+     Phir https://<service>.onrender.com/health kholke check karo.
+  3. Prod seed (Render deploy ke baad, PowerShell):
+  cd backend
+  $env:DATABASE_URL="<neon string>"; npm run seed
+     "Seeded test@example.com" aana chahiye.
+  4. Vercel: Add New Project → repo → Root Directory frontend → env VITE_API_URL
+     = https://<service>.onrender.com/api (/api zaroori hai) → Deploy.
+  5. Render env: CORS_ORIGINS ko exact Vercel origin pe badlo, jaise
+     https://<project>.vercel.app (trailing slash nahi). Redeploy apne aap hoga.
+  6. Mujhe dono URLs bhej do. Main README bharunga, PLAN.md tick karunga, live
+     API pe smoke test chalaunga (login, task, timer, summary) aur last commit
+     karunga.
+
+  Khayal rakhna
+
+  - Haiku ka live call test nahi hua: yahan ANTHROPIC_API_KEY nahi hai. Mujhe
+    Haiku 4.5 pe output_config.format (structured output) chalne ka pakka pata
+    nahi. Deploy ke baad UI se ek suggestion chala ke dekhna, warna 502 aayega
+    aur model ka naam badalna padega.
+  - Public signup khula hai: koi bhi account banake teri key use kar sakta hai.
+    Limits (10/min, 200 chars, Haiku) lagi hain, phir bhi Anthropic console mein
+    monthly spend limit laga dena.
+
+> AI task suggestion feature hata de, mere paas API key nahi hai aur assignment
+  mein ye optional tha. Backend se /api/tasks/suggest route, service,
+  AI_MODEL, ANTHROPIC_API_KEY aur uska rate limiter, tests aur anthropic SDK
+  dependency sab hata. render.yaml aur README se bhi ANTHROPIC_API_KEY hata.
+  Frontend mein agar suggest wala button ya call ho toh wo bhi hata (sirf wahi
+  lines, baaki touch mat kar). PLAN.md ka contract update kar, tests chala, ek
+  focused commit kar ("chore: remove optional AI suggestion"). Phir deploy ke
+  steps jaari rakh.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Pehle backend.
+
+  Searched for 1 pattern, read 1 file, ran 3 shell commands (ctrl+o to expand)
+
+● Frontend mein sirf suggest se jude hue hisse hata raha hoon.
+
+● Update(frontend\src\App.tsx)
+  ⎿  Added 1 line, removed 1 line
+      1  import { useCallback, useEffect, useState, type FormEvent, type 
+         ReactNode } from 'react'
+      2 -import { BarChart3, Check, CheckSquare, Clock3, LogOut, Pencil, 
+        -Plus, Sparkles, Trash2, X } from 'lucide-react'                 
+      2 +import { BarChart3, Check, CheckSquare, Clock3, LogOut, Pencil, 
+        +Plus, Trash2, X } from 'lucide-react'                           
+      3  import { ApiError, json, request, type Summary, type Task, type 
+         TimeLog, type TimeLogEntry, type User } from './api'
+      4  
+      5  type Session = { token: string; user: User }
+
+● Update(frontend\src\App.tsx)
+  ⎿  Added 1 line, removed 1 line
+      79    </div>
+      80  }
+      81  
+      82 -function Tasks({ tasks, active, elapsed, create, update, remove
+         -, start, stop, suggest }: {                                    
+      82 +function Tasks({ tasks, active, elapsed, create, update, remove
+         +, start, stop }: {                                             
+      83    tasks: Task[]; active: TimeLog | null; elapsed: number; creat
+          e: (title: string, description?: string) => Promise<void>; upda
+          te: (task: Task, values: object) => Promise<void>; remove: (tas
+          k: Task) => Promise<void>; start: (task: Task) => Promise<void>
+          ; stop: () => Promise<void>; suggest: (input: string) => Promis
+          e<{ title: string; description: string }>
+      84  }) {
+      85    const [input, setInput] = useState('')
+● Update(frontend\src\App.tsx)
+  ⎿  Added 1 line, removed 1 line
+      80  }
+      81  
+      82  function Tasks({ tasks, active, elapsed, create, update, remove
+          , start, stop }: {
+      83 -  tasks: Task[]; active: TimeLog | null; elapsed: number; creat
+         -e: (title: string, description?: string) => Promise<void>; upda
+         -te: (task: Task, values: object) => Promise<void>; remove: (tas
+         -k: Task) => Promise<void>; start: (task: Task) => Promise<void>
+         -; stop: () => Promise<void>; suggest: (input: string) => Promis
+         -e<{ title: string; description: string }>                      
+      83 +  tasks: Task[]; active: TimeLog | null; elapsed: number; creat
+         +e: (title: string, description?: string) => Promise<void>; upda
+         +te: (task: Task, values: object) => Promise<void>; remove: (tas
+         +k: Task) => Promise<void>; start: (task: Task) => Promise<void>
+         +; stop: () => Promise<void>                                    
+      84  }) {
+      85    const [input, setInput] = useState('')
+      86    const [editing, setEditing] = useState<Task | null>(null)
+
+● Update(frontend\src\App.tsx)
+  ⎿  Removed 1 line
+      85    const [input, setInput] = useState('')
+      86    const [editing, setEditing] = useState<Task | null>(null)
+      87    const [busy, setBusy] = useState(false)
+      88 -  const [hint, setHint] = useState<{ title: string; description
+         -: string } | null>(null)                                       
+      88    const [error, setError] = useState('')
+      89    async function add(event: FormEvent) {
+      90      event.preventDefault()
+
+● Update(frontend\src\App.tsx)
+  ⎿  Added 1 line, removed 1 line
+      90      event.preventDefault()
+      91      if (!input.trim()) return
+      92      setBusy(true); setError('')
+      93 -    try { await create(hint?.title || input.trim(), hint?.descr
+         -iption); setInput(''); setHint(null) }                         
+      93 +    try { await create(input.trim()); setInput('') }           
+      94      catch (cause) { setError((cause as Error).message) }
+      95      finally { setBusy(false) }
+      96    }
+
+● Update(frontend\src\App.tsx)
+  ⎿  Removed 7 lines
+       94      catch (cause) { setError((cause as Error).message) }
+       95      finally { setBusy(false) }
+       96    }
+       97 -  async function getSuggestion() {                            
+       98 -    if (!input.trim()) return                                 
+       99 -    setBusy(true); setError('')                               
+      100 -    try { setHint(await suggest(input.trim())) }              
+      101 -    catch (cause) { setError((cause as Error).message) }      
+      102 -    finally { setBusy(false) }                                
+      103 -  }                                                           
+       97    return <section>
+       98      <div className="mb-6"><h1 className="text-2xl font-bold">T
+           asks</h1><p className="mt-1 text-sm text-muted">Keep your work
+            moving, one task at a time.</p></div>
+       99      <form onSubmit={add} className="card flex flex-wrap gap-3 
+           p-3"><input className="field min-w-52 flex-1" value={input} on
+           Change={event => { setInput(event.target.value); setHint(null)
+            }} placeholder="Add a new task..." aria-label="New task" /><b
+           utton type="button" disabled={busy || !input.trim()} onClick={
+           getSuggestion} className="button text-sm" title="Suggest clear
+           er task details"><Sparkles size={16} /> Suggest</button><butto
+           n disabled={busy || !input.trim()} className="button button-pr
+           imary"><Plus size={17} /> Add</button></form>
+
+● Update(frontend\src\App.tsx)
+  ⎿  Added 1 line, removed 1 line
+       96    }
+       97    return <section>
+       98      <div className="mb-6"><h1 className="text-2xl font-bold">T
+           asks</h1><p className="mt-1 text-sm text-muted">Keep your work
+            moving, one task at a time.</p></div>
+       99 -    <form onSubmit={add} className="card flex flex-wrap gap-3 
+          -p-3"><input className="field min-w-52 flex-1" value={input} on
+          -Change={event => { setInput(event.target.value); setHint(null)
+          - }} placeholder="Add a new task..." aria-label="New task" /><b
+          -utton type="button" disabled={busy || !input.trim()} onClick={
+          -getSuggestion} className="button text-sm" title="Suggest clear
+          -er task details"><Sparkles size={16} /> Suggest</button><butto
+          -n disabled={busy || !input.trim()} className="button button-pr
+          -imary"><Plus size={17} /> Add</button></form>                 
+       99 +    <form onSubmit={add} className="card flex flex-wrap gap-3 
+          +p-3"><input className="field min-w-52 flex-1" value={input} on
+          +Change={event => setInput(event.target.value)} placeholder="Ad
+          +d a new task..." aria-label="New task" /><button disabled={bus
+          +y || !input.trim()} className="button button-primary"><Plus si
+          +ze={17} /> Add</button></form>                                
+      100      {hint && <div className="card mt-4 p-4 text-sm"><p classNa
+           me="font-semibold">Suggested: {hint.title}</p><p className="mt
+           -1 text-muted">{hint.description}</p><button className="mt-2 t
+           ext-accent" onClick={() => setHint(null)}>Use original text</b
+           utton></div>}
+      101      {error && <p role="alert" className="mt-4 text-sm text-red
+           -700">{error}</p>}
+      102      <div className="card mt-6 overflow-hidden">
+
+● Update(frontend\src\App.tsx)
+  ⎿  Removed 1 line
+       97    return <section>
+       98      <div className="mb-6"><h1 className="text-2xl font-bold">T
+           asks</h1><p className="mt-1 text-sm text-muted">Keep your work
+            moving, one task at a time.</p></div>
+       99      <form onSubmit={add} className="card flex flex-wrap gap-3 
+           p-3"><input className="field min-w-52 flex-1" value={input} on
+           Change={event => setInput(event.target.value)} placeholder="Ad
+           d a new task..." aria-label="New task" /><button disabled={bus
+           y || !input.trim()} className="button button-primary"><Plus si
+           ze={17} /> Add</button></form>
+      100 -    {hint && <div className="card mt-4 p-4 text-sm"><p classNa
+          -me="font-semibold">Suggested: {hint.title}</p><p className="mt
+          --1 text-muted">{hint.description}</p><button className="mt-2 t
+          -ext-accent" onClick={() => setHint(null)}>Use original text</b
+          -utton></div>}                                                 
+      100      {error && <p role="alert" className="mt-4 text-sm text-red
+           -700">{error}</p>}
+      101      <div className="card mt-6 overflow-hidden">
+      102        {tasks.length === 0 ? <p className="p-10 text-center tex
+           t-muted">No tasks yet. Add your first task above.</p> : tasks.
+           map(task => <div key={task.id} className="flex flex-wrap items
+           -center gap-3 border-b border-white/60 px-4 py-4 last:border-0
+            sm:px-6">
+
+● Update(frontend\src\App.tsx)
+  ⎿  Added 1 line, removed 1 line
+      189      <header className="flex h-16 items-center justify-between 
+           border-b border-white/60 px-5 sm:px-7"><div className="flex it
+           ems-center gap-2"><span className="h-3 w-3 rounded-full bg-red
+           -400" /><span className="h-3 w-3 rounded-full bg-amber-400" />
+           <span className="h-3 w-3 rounded-full bg-emerald-400" /></div>
+           <strong className="text-sm tracking-tight">Task and Time Track
+           er</strong><div className="flex items-center gap-2"><span clas
+           sName="hidden text-xs text-muted sm:inline">{session.user.name
+           }</span><IconButton label="Log out" onClick={logout}><LogOut s
+           ize={17} /></IconButton></div></header>
+      190      <div className="flex flex-col md:min-h-[680px] md:flex-row
+           "><nav aria-label="Main navigation" className="flex gap-1 bord
+           er-b border-white/60 p-3 md:w-52 md:shrink-0 md:flex-col md:bo
+           rder-b-0 md:border-r md:p-5">{([['tasks', CheckSquare, 'Tasks'
+           ], ['logs', Clock3, 'Time Logs'], ['summary', BarChart3, 'Summ
+           ary']] as const).map(([key, Icon, label]) => <button key={key}
+            onClick={() => setView(key)} className={`flex flex-1 items-ce
+           nter justify-center gap-2 rounded-xl px-3 py-3 text-xs font-se
+           mibold md:flex-none md:justify-start ${view === key ? 'bg-acce
+           nt text-white shadow-raised' : 'text-muted hover:text-ink'}`}>
+           <Icon size={17} />{label}</button>)}</nav>
+      191        <main className="min-w-0 flex-1 p-5 sm:p-8 lg:p-10">{err
+           or && <div role="alert" className="mb-5 flex items-center just
+           ify-between rounded-xl bg-red-100 px-4 py-3 text-sm text-red-8
+           00">{error}<button onClick={() => setError('')} aria-label="Di
+           smiss error"><X size={16} /></button></div>}
+      192 -        {view === 'tasks' && <Tasks tasks={tasks} active={acti
+          -ve} elapsed={elapsed} create={async (title, description) => { 
+          -await call('/tasks', json('POST', { title, description })); aw
+          -ait refresh() }} update={async (task, values) => { await call(
+          -`/tasks/${task.id}`, json('PATCH', values)); await refresh() }
+          -} remove={task => action(() => call(`/tasks/${task.id}`, { met
+          -hod: 'DELETE' }))} start={task => action(() => call(`/tasks/${
+          -task.id}/timer/start`, { method: 'POST' }))} stop={() => actio
+          -n(() => call('/timer/stop', { method: 'POST' }))} suggest={inp
+          -ut => call('/tasks/suggest', json('POST', { input }))} />}    
+      192 +        {view === 'tasks' && <Tasks tasks={tasks} active={acti
+          +ve} elapsed={elapsed} create={async (title, description) => { 
+          +await call('/tasks', json('POST', { title, description })); aw
+          +ait refresh() }} update={async (task, values) => { await call(
+          +`/tasks/${task.id}`, json('PATCH', values)); await refresh() }
+          +} remove={task => action(() => call(`/tasks/${task.id}`, { met
+          +hod: 'DELETE' }))} start={task => action(() => call(`/tasks/${
+          +task.id}/timer/start`, { method: 'POST' }))} stop={() => actio
+          +n(() => call('/timer/stop', { method: 'POST' }))} />}         
+      193          {view === 'logs' && <Logs date={date} setDate={setDate
+           } list={listLogs} />}
+      194          {view === 'summary' && <SummaryView summary={summary} 
+           tasks={tasks} date={date} setDate={setDate} />}
+      195        </main>
+
+● Ab render.yaml, README, PLAN.md aur GOAL.md.
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● depcheck ki shikayat purani dist/ build ki hai (gitignored). Use saaf karke
+  rebuild karta hoon, phir commit.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● AI suggestion poori tarah hata diya, commit 51ff36a ("chore: remove optional
+  AI suggestion"). Backend ke 17 tests pass hain (pehle 20, suggest wale 3
+  gaye), typecheck aur build saaf hain. Frontend ka typecheck aur build bhi
+  theek hai. npm audit mein 0 vulnerabilities aayi. depcheck saaf hai. Kuch
+  jagah "suggest" word bacha hai: PLAN.md mein "deployment targets (suggestion:
+  ...)" aur ek "dropped" wali line. Koi AI code bacha nahi.
+
+  - Backend: suggest route, service, controller, schema, AI_MODEL aur
+    ANTHROPIC_API_KEY config, tests, .env.example ki lines aur @anthropic-ai/sdk
+    dependency sab gaye. Suggest wala limiter bhi gaya. rateLimit.ts ab phir
+    sirf authLimiter hai, kyunki ek use ke liye factory faltu abstraction thi.
+  - Frontend: App.tsx (frontend/src/App.tsx) se sirf Suggest button, hint state,
+    getSuggestion, suggestion card, Sparkles import aur suggest prop/call
+    hataye. Task create ab seedha create(input.trim()) hai, baaki kuch touch
+    nahi kiya.
+  - Docs:
+    - render.yaml se ANTHROPIC_API_KEY gaya.
+    - PLAN.md ka contract aur error table update ho gaya (429 sirf auth ke liye,
+      502/503 gaye).
+    - GOAL.md se optional AI wali line hataayi.
+    - PLAN.md ka step 8 list se hata diya, isliye numbering 7 se 9 pe jaati hai.
+  - README.md: se bhi AI ki lines hata di, par wo file abhi commit nahi ki. Uske
+    URL placeholders deploy ke baad bharne hain, tab ek commit mein jayegi.
+
+  Deploy steps
+
+  0. GitHub: abhi koi remote nahi hai. Empty repo banake ye chala:
+  git remote add origin https://github.com/<you>/<repo>.git
+  git push -u origin main
+     Repo URL bhej de to main push kar dunga.
+  1. Neon: neon.tech pe project banao, direct connection string copy karo
+     (?sslmode=require ke saath).
+  2. Render: New → Blueprint → repo chuno. Ab sirf do cheezein poochega:
+     - DATABASE_URL: Neon wali string.
+     - CORS_ORIGINS: abhi http://localhost:5173 daal do.
+
+     JWT_SECRET Render khud banata hai. Deploy ke logs mein "Applied
+     001_init.sql" aur "Listening" dikhna chahiye. Phir
+     https://<service>.onrender.com/health kholke check karo.
+  3. Prod seed (Render deploy ke baad, PowerShell):
+  cd backend
+  $env:DATABASE_URL="<neon string>"; npm run seed
+     "Seeded test@example.com" aana chahiye.
+  4. Vercel: Add New Project → repo → Root Directory frontend → env VITE_API_URL
+     = https://<service>.onrender.com/api (/api zaroori hai) → Deploy.
+  5. Render env: CORS_ORIGINS ko exact Vercel origin pe badlo, jaise
+     https://<project>.vercel.app (trailing slash nahi). Redeploy apne aap hoga.
+  6. Mujhe dono URLs bhej do. Main README bharunga, PLAN.md tick karunga, live
+     API pe smoke test chalaunga (login, task, timer, summary) aur last commit
+     karunga.
+
+> AGENT DEPLOYMENT PR WORK KRRA HAI JABTK LOCALLY RUN KRTE HAI
+
+● Theek hai, deployment wo agent dekh raha hai, main ab locally chalata hoon.
+  Pehle Postgres container aur ports check karta hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● DB chal raha hai, dono ports khaali hain. Backend aur frontend start karta
+  hoon.
+
+  Ran 3 shell commands (ctrl+o to expand)
+
+● Ab end-to-end check: frontend ki proxy ke through login, task, timer, summary
+  aur time-logs.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● App local pe chal raha hai aur poora flow sahi chala:
+
+  - Frontend: http://localhost:5173
+  - Backend: http://localhost:3000 (health OK; frontend ki proxy /api ko yahin
+    bhejti hai)
+  - Login: test@example.com / password123
+
+  Frontend ki proxy ke through maine login, task banana, timer start, active
+  timer, stop, summary (2 seconds sahi aaye), time-logs aur task delete chalaya,
+  sab theek. UI browser mein khol ke khud dekhna padega, maine screenshot nahi
+  liya.
+
+  Dono servers background mein chal rahe hain. Band karne ke liye bata dena, ya
+  terminal/VS Code se hata dena.
+
+  Deployment wale agent ke liye kuch cheezein jaanni zaroori hain:
+  - render.yaml, frontend/vercel.json aur backend ka prod npm start (migrate +
+    server) pehle se commit hain.
+  - Frontend ko VITE_API_URL mein /api ke saath pura URL chahiye.
+  - README mein URL placeholders (FRONTEND_URL, BACKEND_URL) deploy ke baad
+    bharne hain, aur wo file abhi commit nahi hui.
+
+  Deploy ke baad wapas bata dena, main README, PLAN.md ki ticks aur live smoke
+  test khatam kar dunga.
+
+● Background command "Run backend dev server on port 3000" was stopped after
+reaching its background time limit
+
+● Backend dev server ab band ho gaya hai. Background time limit poori hone pe
+  system ne use stop kar diya. Ye apne aap hua hai, maine ya tune kuch nahi
+  kiya. Dobara start nahi kiya, kyunki system note kehta hai ki longest timeout
+  ke baad restart nahi karna.
+
+  Is wajah se http://localhost:3000 ab nahi chalega, aur frontend ki /api calls
+  fail hongi. Frontend dev server (5173) ka status maine check nahi kiya, ho
+  sakta hai wo bhi isi tarah band ho gaya ho.
+
+  Dobara chalana ho to apne terminal mein ye chala de:
+
+  cd backend
+  npm run dev
+
+  Frontend ke liye cd frontend karke npm run dev. DB container task-tracker-db
+  alag chal raha hai, use kuch nahi hua.
+
+● Background command "Run frontend Vite dev server on port 5173" was stopped
+after reaching its background time limit
+
+● Frontend dev server (port 5173) bhi band ho gaya hai. Wahi background time
+  limit se system ne stop kar diya, maine nahi kiya. Pichle message mein maine
+  bola tha ki iska status check nahi kiya, ab confirm ho gaya ki ye bhi band
+  hai.
+
+  Abhi dono servers band hain, isliye http://localhost:5173 aur
+  http://localhost:3000 dono nahi khulenge. Dobara start nahi kiya, kyunki
+  system note ke mutabiq restart nahi karna hai.
+
+  Apne terminal mein dono alag-alag chala de:
+
+  cd backend
+  npm run dev
+
+  cd frontend
+  npm run dev
+
+  DB container task-tracker-db chal raha hai, migrations aur seed user
+  (test@example.com / password123) pehle se lage hain. Deployment wala agent jab
+  URLs de, tab mujhe bata dena.
+
+> Deployment live hai: Task and Time Tracker. Public /health ne 200 OK diya;
+  bina token /api/tasks ne 401 diya.
+  - Port 8443: Oracle ingress aur VPS firewalld, dono mein allowed hai.
+  - Reboot ke baad startup: nginx, task-tracker-api aur Docker enabled aur
+  active hain. PostgreSQL container ki restart policy unless-stopped hai.
+  - HTTPS renewal: certbot-renew.timer ab enabled aur active hai. sudo certbot
+  renew --dry-run --no-random-sleep-on-renew successful raha. Renewal ke baad
+  Nginx reload hook laga hai.
+  - Security: Auth par 20 requests/15 min rate limit hai; Nginx se client IP
+  forwarding fix ki. Inputs Zod se validate hote hain, SQL queries
+  parameterized aur user-scoped hain, passwords bcrypt se hash hote hain, aur
+  protected routes JWT maangte hain. Frontend 401 par token clear karke login
+  dikhata hai.
+  ----
+  backend me sara kaam hogya hai cross verify karlo, secound agent ik new
+  frontend pr work krra hai dark theme add krne ka
+
+● Pehle dekhta hoon ki deployment agent ne repo mein kya badla aur live URL
+  kahan likha hai.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Repo mein live deployment ka koi record nahi mila kyunki deploy VPS pe repo ke
+  bahar hua hai, isliye live server verify nahi kar sakta. Ab main code-level
+  claims — Zod, parameterized SQL, user-scoped queries, aur auth — ko repo mein
+  direct check karunga. · summary
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Static audit saaf hai. Ab full local verification dobara chalata hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Repo ka backend local pe theek hai, lekin live deployment pe main abhi kuch
+  verify nahi kar paya. Tune URL nahi diya, aur repo mein bhi deploy ka koi
+  nishaan nahi hai. Deploy VPS pe hua hai, render.yaml ya vercel.json se nahi.
+
+  Jo verify kar liya (repo, local)
+
+  - Typecheck saaf hai, tsc build ho raha hai aur 17/17 tests pass hain.
+  - npm audit mein 0 vulnerabilities aayi. depcheck saaf hai. TODO aur
+    console.log nahi mile.
+  - Saari SQL queries user_id se scoped hain. ${} sirf hardcoded COLUMNS
+    constants mein hai, user input kisi query mein interpolate nahi hota.
+  - /api/tasks, /timer, /summary aur /time-logs authenticate ke peeche hain.
+    Sirf /api/auth/signup aur /login open hain (auth limiter 20 requests/15 min
+    ke saath), aur /health.
+  - Repo mein koi .env ya secret commit nahi hai. password123 sirf seed aur
+    tests mein hai. Ye wahi test account hai jo tune maanga tha.
+
+  Jo repo se verify nahi ho sakta
+
+  Deploy agent ke ye claims maine nahi dekhe: port 8443 firewall, reboot ke baad
+  services, certbot timer aur dry-run, Nginx se client IP forwarding, frontend
+  ka 401 par token clear karna, aur live /health 200 / /api/tasks 401. Nginx IP
+  forwarding trust proxy se juda hai. Mera code wo setting sirf
+  NODE_ENV=production mein lagata hai, aur Nginx ek hop hai, toh setting sahi
+  baithti hai, par server ka env maine nahi dekha.
+
+  Mujhe chahiye
+
+  1. Live base URL (host aur port 8443). Ye milte hi main ek live smoke test
+     chalaunga:
+     - /health
+     - bina token /api/tasks (401)
+     - login
+     - task banana
+     - timer start aur doosra start (409)
+     - stop
+     - summary
+     - /api/time-logs (404 nahi aana chahiye)
+     - /api/tasks/suggest (404 aana chahiye)
+     - ek cross-user check (2 user banake)
+
+     Is test se pata chalega ki VPS par jo chal raha hai wo abhi ke repo HEAD ke
+     barabar hai ya purana build. Last 3 commits ka AI removal, JWT default 24h
+     aur time-logs yahi dikhayenge. Test user live DB mein banega, cleanup main
+     kar dunga. Ye theek ho to bata dena.
+  2. Kya VPS wala code git se aaya hai? Repo mein koi remote nahi hai. Agar
+     deploy agent ne working tree copy kiya hai to theek, par uncommitted ya
+     purana build hone ka khatra hai.
+
+  Jo repo mein ab stale hai
+
+  - README.md abhi bhi Neon/Render/Vercel bolta hai aur uske FRONTEND_URL aur
+    BACKEND_URL placeholders hain. Live URL milne ke baad ise actual VPS
+    deployment ke hisaab se likhunga aur commit karunga.
+  - render.yaml aur frontend/vercel.json ab use nahi ho rahe. Chahe to ek commit
+    mein hata dun, reviewers ko confuse nahi karenge.
+  - PLAN.md ke steps 15 se 17 abhi bhi tick nahi hain. Live smoke test ke baad
+    tick karunga.
+
+  Frontend mein dark theme wala agent kaam kar raha hai, toh frontend/ ko maine
+  touch nahi kiya.
+
+> https://140-245-9-202.sslip.io:8443/
+  maine manualy borwser se bhi ckech kiya it is working
+● URL mil gaya, live smoke test chalata hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Public checks theek hain. suggest ka 401 auth middleware se aaya hai, to asli
+  jawab token ke saath dekhna padega. Ab authenticated flow.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Live server repo HEAD jaisa hi behave kar raha hai. Ab cross-user isolation
+  check, doosra throwaway user banake.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Live deployment poori tarah sahi nikli. Ab README live details ke saath
+  finalize karke PLAN.md tick karta hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Live backend theek chal raha hai aur repo ke HEAD jaisa hi behave karta hai.
+  README ab live URL ke saath commit ho gaya (18a5ea4) aur PLAN.md ke steps 15
+  se 17 tick ho gaye.
+
+  Live verification (https://140-245-9-202.sslip.io:8443)
+
+  - Public:
+    - /health 200 aaya.
+    - Root HTML deta hai aur deep link /tasks bhi 200.
+    - Bina token ya galat token pe /api/tasks 401 deta hai.
+    - Helmet ke headers mile (HSTS, CSP, nosniff, X-Frame-Options). Response
+      mein X-Powered-By nahi hai.
+  - Auth:
+    - Seed user ka login 200.
+    - Galat password 401, galat signup input 400.
+    - /me sahi user deta hai.
+    - Token ki lifetime 86400s, yaani 24h.
+  - Deploy HEAD jaisa hai:
+    - /api/time-logs maujood hai.
+    - POST /api/tasks/suggest token ke saath 404 deta hai, yaani AI wala code
+      hat chuka hai.
+  - Flow:
+    - Task banana (khali title pe 400).
+    - Timer start 201, dobara start 409.
+    - Active timer endedAt: null ke saath (elapsed 2.3s), stop 200, dobara
+      stop 404.
+    - Summary 2s, time-logs mein 1 entry, galat range pe 400.
+    - Task delete karne pe time logs bhi gaye (cascade).
+  - Cross-user: doosra user A ke task pe get, patch, delete aur timer start, sab
+    pe 404. B ki task list aur A ke taskId ke logs khaali aaye, aur A ka task
+    achha raha.
+
+  Jo verify nahi hua
+
+  - Rate limit (20/15 min): maine chalaya nahi, kyunki 20 requests se teri IP 15
+    minute ke liye lock ho jaati. Client IP forwarding ka pakka saboot isi se
+    milta.
+  - Browser UI, reboot ke baad services aur certbot: ye deploy agent aur tere
+    bataye hue claims hain, maine inhe nahi dekha.
+  - Frontend: dark theme wale agent ke frontend/ ke uncommitted changes
+    (App.tsx, styles.css, tailwind.config.js) ko main ne nahi chhua.
+
+  Live DB mein jo chhoda
+
+  - Throwaway user smoke-test-b@example.com bana hai (password
+    smoke-test-pass-1). User delete karne ka endpoint nahi hai, to ise server pe
+    DELETE FROM users WHERE email = 'smoke-test-b@example.com' se hata sakte
+    ho. Seed user ke sirf wahi do original tasks bache hain, smoke task delete
+    kar diya.
+
+  Pending
+
+  render.yaml aur frontend/vercel.json ab use nahi hote aur README mein bhi nahi
+  hain. Reviewers ko confuse kar sakte hain. Hata dun? Ek chhota commit hai,
+  par tune ab tak haan nahi kaha.
+
+> haa hatado or
+  README commit karo. Usme live link, test credentials (test@example.com /
+  password123), setup steps aur stack ho.
+  ye bhi krdo
+
+● README already commit ho chuka hai (18a5ea4) aur usme ye sab hai. Pehle ek
+  baar check karta hoon, phir dono stale files hataata hoon.
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Dono kaam ho gaye.
+
+  - README: 18a5ea4 mein commit ho chuka tha, aur ab koi uncommitted change nahi
+    hai. Usme live link (https://140-245-9-202.sslip.io:8443/), test
+    credentials (test@example.com / password123), tech stack, local setup steps,
+    env vars, API overview aur VPS deployment ka section hai.
+  - Stale files: render.yaml aur frontend/vercel.json hata diye, commit c64833a.
+    Repo mein ab in dono files ka kahin zikr nahi bacha.
+
+  Dark theme wale agent ka commit (b356a73) history mein aa gaya hai, use maine
+  chhua nahi.
+
+  Screenshots tune khud daalne the, to README mein unki jagah abhi nahi hai.
+  Daalte waqt README.md mein ek "Screenshots" section jod dena.
