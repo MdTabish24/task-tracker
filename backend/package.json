@@ -6,15 +6,21 @@
     "dev": "tsx watch --env-file=.env src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "tsx --env-file=.env src/db/migrate.ts",
+    "seed": "tsx --env-file=.env src/db/seed.ts"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.2.1",
+    "pg": "^8.23.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.3",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
