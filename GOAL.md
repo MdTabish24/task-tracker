@@ -26,6 +26,7 @@ Build a **Task and Time Tracking App** (full stack) for a job assignment. Users 
 - [ ] Timer is real-time in the UI and survives page refresh (computed from a server-stored start timestamp)
 - [ ] One active timer per user
 - [ ] Time logs stored per task
+- [ ] View all time logs
 
 ### 4. Daily summary
 - [ ] Total time tracked for a day

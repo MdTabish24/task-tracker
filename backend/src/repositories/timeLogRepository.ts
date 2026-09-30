@@ -1,4 +1,5 @@
 import { pool } from "../db";
+import type { ListTimeLogsQuery } from "../schemas/timeLog";
 
 export interface TimeLog {
   id: string;
@@ -7,7 +8,30 @@ export interface TimeLog {
   endedAt: Date | null;
 }
 
+export interface TimeLogEntry extends TimeLog {
+  taskTitle: string;
+  durationSeconds: number;
+}
+
 const COLUMNS = 'id, task_id AS "taskId", started_at AS "startedAt", ended_at AS "endedAt"';
+
+export async function list(userId: string, { from, to, taskId, limit, offset }: ListTimeLogsQuery) {
+  const { rows } = await pool.query<TimeLogEntry>(
+    `SELECT l.id, l.task_id AS "taskId", t.title AS "taskTitle",
+            l.started_at AS "startedAt", l.ended_at AS "endedAt",
+            round(extract(epoch FROM coalesce(l.ended_at, now()) - l.started_at))::int AS "durationSeconds"
+       FROM time_logs l
+       JOIN tasks t ON t.id = l.task_id
+      WHERE l.user_id = $1
+        AND ($2::timestamptz IS NULL OR l.started_at >= $2)
+        AND ($3::timestamptz IS NULL OR l.started_at < $3)
+        AND ($4::uuid IS NULL OR l.task_id = $4)
+      ORDER BY l.started_at DESC
+      LIMIT $5 OFFSET $6`,
+    [userId, from, to, taskId, limit, offset],
+  );
+  return rows;
+}
 
 export async function start(userId: string, taskId: string) {
   const { rows } = await pool.query<TimeLog>(

@@ -1,5 +1,6 @@
 import request from "supertest";
 import { app } from "../src/app";
+import { pool } from "../src/db";
 
 export const api = () => request(app);
 
@@ -14,3 +15,13 @@ export async function signup(email = "user@example.com") {
   const res = await api().post("/api/auth/signup").send({ name: "User", email, password: "password123" });
   return { token: res.body.token as string, auth: { Authorization: `Bearer ${res.body.token}` } };
 }
+
+export const userIdOf = async (auth: Auth) => (await api().get("/api/auth/me").set(auth)).body.id as string;
+
+export const log = (taskId: string, userId: string, startedAt: string, endedAt: string | null) =>
+  pool.query("INSERT INTO time_logs (user_id, task_id, started_at, ended_at) VALUES ($1, $2, $3, $4)", [
+    userId,
+    taskId,
+    startedAt,
+    endedAt,
+  ]);

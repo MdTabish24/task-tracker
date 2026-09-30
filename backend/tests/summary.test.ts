@@ -1,17 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { pool } from "../src/db";
-import { type Auth, api, createTask, signup } from "./helpers";
-
-const log = (taskId: string, userId: string, startedAt: string, endedAt: string | null) =>
-  pool.query("INSERT INTO time_logs (user_id, task_id, started_at, ended_at) VALUES ($1, $2, $3, $4)", [
-    userId,
-    taskId,
-    startedAt,
-    endedAt,
-  ]);
-
-const userIdOf = async (auth: Auth) =>
-  (await api().get("/api/auth/me").set(auth)).body.id as string;
+import { type Auth, api, createTask, log, signup, userIdOf } from "./helpers";
 
 const summary = (auth: Auth, from: string, to: string) =>
   api().get("/api/summary").query({ from, to }).set(auth);

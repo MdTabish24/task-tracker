@@ -40,13 +40,16 @@ unique index on time_logs(user_id) where ended_at is null   -- one active timer 
 Base path `/api`. JSON everywhere. All routes except signup/login need `Authorization: Bearer <token>`.
 
 **Error shape** (all errors): `{ "error": { "message": string, "details"?: object } }`
-Statuses: `400` validation, `401` missing/invalid token or bad credentials, `404` not found (or not yours), `409` conflict, `500` unexpected.
+Statuses: `400` validation, `401` missing/invalid token or bad credentials, `404` not found (or not yours), `409` conflict, `429` rate limited (auth routes, `POST /tasks/suggest`), `500` unexpected, `502` AI provider failed, `503` AI suggestions not configured (no API key).
+
+`GET /health` (outside `/api`, no auth) returns `200 { status: "ok" }` for uptime checks.
 
 **Types**
 ```
 User    { id, name, email }
 Task    { id, title, description, status, createdAt, updatedAt }
 TimeLog { id, taskId, startedAt, endedAt: string | null }
+TimeLogEntry { id, taskId, taskTitle, startedAt, endedAt: string | null, durationSeconds }
 ```
 
 ### Auth
@@ -81,6 +84,13 @@ The client computes elapsed as `now - startedAt` using the server's `now`, then 
 | `GET /summary` | `from`, `to` (ISO timestamps bounding the user's local day) | `200 { totalSeconds, tasks: [{ taskId, title, seconds }] }` |
 
 A running timer counts up to the request time; logs are clipped to `[from, to]`.
+
+### Time logs
+| Route | Query (all optional) | Success |
+|---|---|---|
+| `GET /time-logs` | `from`, `to` (ISO with offset; logs that *started* in `[from, to)`), `taskId` (uuid), `limit` (1–200, default 50), `offset` (default 0) | `200 TimeLogEntry[]` (newest `startedAt` first) |
+
+`durationSeconds` is derived on the server; for a running timer (`endedAt: null`) it counts up to the DB's `now()`. Only the caller's logs are ever returned, so another user's `taskId` yields `[]`.
 
 ## Open questions
 - Deployment targets (suggestion: Neon/Supabase Postgres, Render backend, Vercel frontend).

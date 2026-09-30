@@ -7,6 +7,7 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import { authRoutes } from "./routes/authRoutes";
 import { summaryRoutes } from "./routes/summaryRoutes";
 import { taskRoutes } from "./routes/taskRoutes";
+import { timeLogRoutes } from "./routes/timeLogRoutes";
 import { timerRoutes } from "./routes/timerRoutes";
 
 export const app = express();
@@ -22,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/tasks", authenticate, taskRoutes);
 app.use("/api/timer", authenticate, timerRoutes);
 app.use("/api/summary", authenticate, summaryRoutes);
+app.use("/api/time-logs", authenticate, timeLogRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
