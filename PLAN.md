@@ -1,6 +1,6 @@
 # PLAN
 
-Assumptions (change if you disagree): monorepo with `backend/` and `frontend/`; frontend is React + Vite + TypeScript; auth via `Authorization: Bearer <jwt>` (logout = client discards the token); AI suggestions via the Claude API, optional and off if no key is set.
+Assumptions (change if you disagree): monorepo with `backend/` and `frontend/`; frontend is React + Vite + TypeScript; auth via `Authorization: Bearer <jwt>` (logout = client discards the token). The optional AI task suggestion was dropped.
 
 ## Steps
 Each step is one commit.
@@ -13,12 +13,11 @@ Each step is one commit.
 - [x] 5. Tasks: create, list, get, update, delete (user-scoped)
 - [x] 6. Timer: start, stop, active (one per user)
 - [x] 7. Daily summary
-- [x] 8. AI task suggestion endpoint
 
 **Frontend** (after the UI reference image is provided)
 - [x] 9. Scaffold `frontend/`, API client, auth context, protected routes
 - [x] 10. Signup / login / logout screens
-- [x] 11. Task list + create (with AI suggestion) + edit
+- [x] 11. Task list + create + edit
 - [x] 12. Timer UI (live tick from server `startedAt`)
 - [x] 13. Daily summary view
 - [x] 14. Polish to match the reference design
@@ -40,7 +39,7 @@ unique index on time_logs(user_id) where ended_at is null   -- one active timer 
 Base path `/api`. JSON everywhere. All routes except signup/login need `Authorization: Bearer <token>`.
 
 **Error shape** (all errors): `{ "error": { "message": string, "details"?: object } }`
-Statuses: `400` validation, `401` missing/invalid token or bad credentials, `404` not found (or not yours), `409` conflict, `429` rate limited (auth routes, `POST /tasks/suggest`), `500` unexpected, `502` AI provider failed, `503` AI suggestions not configured (no API key).
+Statuses: `400` validation, `401` missing/invalid token or bad credentials, `404` not found (or not yours), `409` conflict, `429` rate limited (auth routes), `500` unexpected.
 
 `GET /health` (outside `/api`, no auth) returns `200 { status: "ok" }` for uptime checks.
 
@@ -67,7 +66,6 @@ TimeLogEntry { id, taskId, taskTitle, startedAt, endedAt: string | null, duratio
 | `GET /tasks/:id` | – | `200 Task` |
 | `PATCH /tasks/:id` | any of `{ title, description, status }` | `200 Task` |
 | `DELETE /tasks/:id` | – | `204` (its time logs are deleted with it; stops the timer if running) |
-| `POST /tasks/suggest` | `{ input }` (natural language, max 200 chars; 10 requests/min per user) | `200 { title, description }` (not saved; client then calls `POST /tasks`) |
 
 ### Timer
 | Route | Body | Success |

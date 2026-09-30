@@ -1,10 +1,5 @@
 import type { RequestHandler } from "express";
-import * as suggestionService from "../services/suggestionService";
 import * as taskService from "../services/taskService";
-
-export const suggest: RequestHandler = async (req, res) => {
-  res.json(await suggestionService.suggest(req.body.input));
-};
 
 export const create: RequestHandler = async (req, res) => {
   res.status(201).json(await taskService.create(req.userId, req.body));

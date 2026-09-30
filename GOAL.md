@@ -16,7 +16,6 @@ Build a **Task and Time Tracking App** (full stack) for a job assignment. Users 
 
 ### 2. Task management
 - [ ] Create a task from natural-language input (e.g. "follow up with designer")
-- [ ] *(optional)* AI suggests a clearer title and a structured description before saving
 - [ ] View all tasks
 - [ ] Edit/update task details
 - [ ] Delete a task

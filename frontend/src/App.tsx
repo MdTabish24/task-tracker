@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react'
-import { BarChart3, Check, CheckSquare, Clock3, LogOut, Pencil, Plus, Sparkles, Trash2, X } from 'lucide-react'
+import { BarChart3, Check, CheckSquare, Clock3, LogOut, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { ApiError, json, request, type Summary, type Task, type TimeLog, type TimeLogEntry, type User } from './api'
 
 type Session = { token: string; user: User }
@@ -79,33 +79,24 @@ function TaskDialog({ task, close, save }: { task: Task; close: () => void; save
   </div>
 }
 
-function Tasks({ tasks, active, elapsed, create, update, remove, start, stop, suggest }: {
-  tasks: Task[]; active: TimeLog | null; elapsed: number; create: (title: string, description?: string) => Promise<void>; update: (task: Task, values: object) => Promise<void>; remove: (task: Task) => Promise<void>; start: (task: Task) => Promise<void>; stop: () => Promise<void>; suggest: (input: string) => Promise<{ title: string; description: string }>
+function Tasks({ tasks, active, elapsed, create, update, remove, start, stop }: {
+  tasks: Task[]; active: TimeLog | null; elapsed: number; create: (title: string, description?: string) => Promise<void>; update: (task: Task, values: object) => Promise<void>; remove: (task: Task) => Promise<void>; start: (task: Task) => Promise<void>; stop: () => Promise<void>
 }) {
   const [input, setInput] = useState('')
   const [editing, setEditing] = useState<Task | null>(null)
   const [busy, setBusy] = useState(false)
-  const [hint, setHint] = useState<{ title: string; description: string } | null>(null)
   const [error, setError] = useState('')
   async function add(event: FormEvent) {
     event.preventDefault()
     if (!input.trim()) return
     setBusy(true); setError('')
-    try { await create(hint?.title || input.trim(), hint?.description); setInput(''); setHint(null) }
-    catch (cause) { setError((cause as Error).message) }
-    finally { setBusy(false) }
-  }
-  async function getSuggestion() {
-    if (!input.trim()) return
-    setBusy(true); setError('')
-    try { setHint(await suggest(input.trim())) }
+    try { await create(input.trim()); setInput('') }
     catch (cause) { setError((cause as Error).message) }
     finally { setBusy(false) }
   }
   return <section>
     <div className="mb-6"><h1 className="text-2xl font-bold">Tasks</h1><p className="mt-1 text-sm text-muted">Keep your work moving, one task at a time.</p></div>
-    <form onSubmit={add} className="card flex flex-wrap gap-3 p-3"><input className="field min-w-52 flex-1" value={input} onChange={event => { setInput(event.target.value); setHint(null) }} placeholder="Add a new task..." aria-label="New task" /><button type="button" disabled={busy || !input.trim()} onClick={getSuggestion} className="button text-sm" title="Suggest clearer task details"><Sparkles size={16} /> Suggest</button><button disabled={busy || !input.trim()} className="button button-primary"><Plus size={17} /> Add</button></form>
-    {hint && <div className="card mt-4 p-4 text-sm"><p className="font-semibold">Suggested: {hint.title}</p><p className="mt-1 text-muted">{hint.description}</p><button className="mt-2 text-accent" onClick={() => setHint(null)}>Use original text</button></div>}
+    <form onSubmit={add} className="card flex flex-wrap gap-3 p-3"><input className="field min-w-52 flex-1" value={input} onChange={event => setInput(event.target.value)} placeholder="Add a new task..." aria-label="New task" /><button disabled={busy || !input.trim()} className="button button-primary"><Plus size={17} /> Add</button></form>
     {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
     <div className="card mt-6 overflow-hidden">
       {tasks.length === 0 ? <p className="p-10 text-center text-muted">No tasks yet. Add your first task above.</p> : tasks.map(task => <div key={task.id} className="flex flex-wrap items-center gap-3 border-b border-white/60 px-4 py-4 last:border-0 sm:px-6">
@@ -198,7 +189,7 @@ export default function App() {
     <header className="flex h-16 items-center justify-between border-b border-white/60 px-5 sm:px-7"><div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400" /><span className="h-3 w-3 rounded-full bg-amber-400" /><span className="h-3 w-3 rounded-full bg-emerald-400" /></div><strong className="text-sm tracking-tight">Task and Time Tracker</strong><div className="flex items-center gap-2"><span className="hidden text-xs text-muted sm:inline">{session.user.name}</span><IconButton label="Log out" onClick={logout}><LogOut size={17} /></IconButton></div></header>
     <div className="flex flex-col md:min-h-[680px] md:flex-row"><nav aria-label="Main navigation" className="flex gap-1 border-b border-white/60 p-3 md:w-52 md:shrink-0 md:flex-col md:border-b-0 md:border-r md:p-5">{([['tasks', CheckSquare, 'Tasks'], ['logs', Clock3, 'Time Logs'], ['summary', BarChart3, 'Summary']] as const).map(([key, Icon, label]) => <button key={key} onClick={() => setView(key)} className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold md:flex-none md:justify-start ${view === key ? 'bg-accent text-white shadow-raised' : 'text-muted hover:text-ink'}`}><Icon size={17} />{label}</button>)}</nav>
       <main className="min-w-0 flex-1 p-5 sm:p-8 lg:p-10">{error && <div role="alert" className="mb-5 flex items-center justify-between rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}<button onClick={() => setError('')} aria-label="Dismiss error"><X size={16} /></button></div>}
-        {view === 'tasks' && <Tasks tasks={tasks} active={active} elapsed={elapsed} create={async (title, description) => { await call('/tasks', json('POST', { title, description })); await refresh() }} update={async (task, values) => { await call(`/tasks/${task.id}`, json('PATCH', values)); await refresh() }} remove={task => action(() => call(`/tasks/${task.id}`, { method: 'DELETE' }))} start={task => action(() => call(`/tasks/${task.id}/timer/start`, { method: 'POST' }))} stop={() => action(() => call('/timer/stop', { method: 'POST' }))} suggest={input => call('/tasks/suggest', json('POST', { input }))} />}
+        {view === 'tasks' && <Tasks tasks={tasks} active={active} elapsed={elapsed} create={async (title, description) => { await call('/tasks', json('POST', { title, description })); await refresh() }} update={async (task, values) => { await call(`/tasks/${task.id}`, json('PATCH', values)); await refresh() }} remove={task => action(() => call(`/tasks/${task.id}`, { method: 'DELETE' }))} start={task => action(() => call(`/tasks/${task.id}/timer/start`, { method: 'POST' }))} stop={() => action(() => call('/timer/stop', { method: 'POST' }))} />}
         {view === 'logs' && <Logs date={date} setDate={setDate} list={listLogs} />}
         {view === 'summary' && <SummaryView summary={summary} tasks={tasks} date={date} setDate={setDate} />}
       </main>
