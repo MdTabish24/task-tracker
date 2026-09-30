@@ -1,7 +1,7 @@
 import { pool } from "../db";
 import type { CreateTaskInput, UpdateTaskInput } from "../schemas/task";
 
-export interface Task {
+interface Task {
   id: string;
   title: string;
   description: string;

@@ -1,6 +1,6 @@
 import { pool } from "../db";
 
-export interface User {
+interface User {
   id: string;
   name: string;
   email: string;

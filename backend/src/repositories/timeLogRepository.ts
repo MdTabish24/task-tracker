@@ -1,14 +1,14 @@
 import { pool } from "../db";
 import type { ListTimeLogsQuery } from "../schemas/timeLog";
 
-export interface TimeLog {
+interface TimeLog {
   id: string;
   taskId: string;
   startedAt: Date;
   endedAt: Date | null;
 }
 
-export interface TimeLogEntry extends TimeLog {
+interface TimeLogEntry extends TimeLog {
   taskTitle: string;
   durationSeconds: number;
 }
