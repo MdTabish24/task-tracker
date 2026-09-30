@@ -12,6 +12,9 @@ import { timerRoutes } from "./routes/timerRoutes";
 
 export const app = express();
 
+// Render terminates TLS behind one proxy; without this every client shares the proxy's IP in rate limiting.
+if (config.NODE_ENV === "production") app.set("trust proxy", 1);
+
 app.use(helmet());
 app.use(cors({ origin: config.CORS_ORIGINS }));
 app.use(express.json());
