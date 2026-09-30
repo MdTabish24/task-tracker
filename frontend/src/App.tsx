@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from 'react'
-import { BarChart3, Check, CheckSquare, Clock3, LogOut, Pencil, Plus, Trash2, X } from 'lucide-react'
+import { useCallback, useEffect, useLayoutEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { BarChart3, Check, CheckSquare, Clock3, LogOut, Moon, Pencil, Plus, Sun, Trash2, X } from 'lucide-react'
 import { ApiError, json, request, type Summary, type Task, type TimeLog, type TimeLogEntry, type User } from './api'
 
 type Session = { token: string; user: User }
@@ -19,10 +19,10 @@ function localDay(date: Date) {
 }
 
 function IconButton({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {
-  return <button type="button" aria-label={label} title={label} onClick={onClick} className="rounded-lg p-2 text-muted hover:bg-white/40 hover:text-accent">{children}</button>
+  return <button type="button" aria-label={label} title={label} onClick={onClick} className="rounded-lg p-2 text-muted hover:bg-ink/5 hover:text-accent">{children}</button>
 }
 
-function Auth({ onSuccess }: { onSuccess: (session: Session) => void }) {
+function Auth({ onSuccess, themeButton }: { onSuccess: (session: Session) => void; themeButton: ReactNode }) {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -39,7 +39,7 @@ function Auth({ onSuccess }: { onSuccess: (session: Session) => void }) {
   }
   return <main className="flex min-h-screen items-center justify-center p-5">
     <div className="card w-full max-w-md p-7 sm:p-10">
-      <div className="mb-9 flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400" /><span className="h-3 w-3 rounded-full bg-amber-400" /><span className="h-3 w-3 rounded-full bg-emerald-400" /></div>
+      <div className="mb-9 flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400" /><span className="h-3 w-3 rounded-full bg-amber-400" /><span className="h-3 w-3 rounded-full bg-emerald-400" /><span className="ml-auto">{themeButton}</span></div>
       <h1 className="text-center text-2xl font-bold tracking-tight">Task and Time Tracker</h1>
       <p className="mt-2 text-center text-sm text-muted">Stay focused. See where your time goes.</p>
       <div className="mt-9 grid grid-cols-2 gap-3" role="tablist" aria-label="Account">
@@ -49,7 +49,7 @@ function Auth({ onSuccess }: { onSuccess: (session: Session) => void }) {
         {mode === 'signup' && <input className="field" name="name" placeholder="Your name" autoComplete="name" required />}
         <input className="field" name="email" type="email" placeholder="you@example.com" autoComplete="email" required />
         <input className="field" name="password" type="password" placeholder="Password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} minLength={mode === 'signup' ? 8 : undefined} required />
-        {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{error}</p>}
         <button disabled={busy} className="button button-primary w-full">{busy ? 'Please wait…' : mode === 'login' ? 'Login' : 'Create account'}</button>
       </form>
     </div>
@@ -73,7 +73,7 @@ function TaskDialog({ task, close, save }: { task: Task; close: () => void; save
       <label className="mt-6 block text-sm font-semibold">Title<input className="field mt-2" name="title" defaultValue={task.title} maxLength={200} required autoFocus /></label>
       <label className="mt-5 block text-sm font-semibold">Description<textarea className="field mt-2 min-h-28 resize-y" name="description" defaultValue={task.description} /></label>
       <label className="mt-5 block text-sm font-semibold">Status<select className="field mt-2" name="status" defaultValue={task.status}><option value="todo">To do</option><option value="in_progress">In progress</option><option value="done">Done</option></select></label>
-      {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
+      {error && <p role="alert" className="mt-4 text-sm text-red-700 dark:text-red-300">{error}</p>}
       <div className="mt-7 flex justify-end gap-3"><button type="button" className="button" onClick={close}>Cancel</button><button disabled={busy} className="button button-primary">Save</button></div>
     </form>
   </div>
@@ -97,12 +97,12 @@ function Tasks({ tasks, active, elapsed, create, update, remove, start, stop }: 
   return <section>
     <div className="mb-6"><h1 className="text-2xl font-bold">Tasks</h1><p className="mt-1 text-sm text-muted">Keep your work moving, one task at a time.</p></div>
     <form onSubmit={add} className="card flex flex-wrap gap-3 p-3"><input className="field min-w-52 flex-1" value={input} onChange={event => setInput(event.target.value)} placeholder="Add a new task..." aria-label="New task" /><button disabled={busy || !input.trim()} className="button button-primary"><Plus size={17} /> Add</button></form>
-    {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
+    {error && <p role="alert" className="mt-4 text-sm text-red-700 dark:text-red-300">{error}</p>}
     <div className="card mt-6 overflow-hidden">
-      {tasks.length === 0 ? <p className="p-10 text-center text-muted">No tasks yet. Add your first task above.</p> : tasks.map(task => <div key={task.id} className="flex flex-wrap items-center gap-3 border-b border-white/60 px-4 py-4 last:border-0 sm:px-6">
-        <button type="button" aria-label={`Mark ${task.title} ${task.status === 'done' ? 'to do' : 'done'}`} onClick={() => update(task, { status: task.status === 'done' ? 'todo' : 'done' })} className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border border-slate-300 bg-surface shadow-raised ${task.status === 'done' ? 'text-accent' : ''}`}>{task.status === 'done' && <Check size={14} />}</button>
+      {tasks.length === 0 ? <p className="p-10 text-center text-muted">No tasks yet. Add your first task above.</p> : tasks.map(task => <div key={task.id} className="flex flex-wrap items-center gap-3 border-b border-ink/10 px-4 py-4 last:border-0 sm:px-6">
+        <button type="button" aria-label={`Mark ${task.title} ${task.status === 'done' ? 'to do' : 'done'}`} onClick={() => update(task, { status: task.status === 'done' ? 'todo' : 'done' })} className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border border-ink/20 bg-surface shadow-raised ${task.status === 'done' ? 'text-accent' : ''}`}>{task.status === 'done' && <Check size={14} />}</button>
         <div className="min-w-0 flex-1 basis-40"><p className={`truncate text-sm font-medium ${task.status === 'done' ? 'text-muted line-through' : ''}`}>{task.title}</p>{task.description && <p className="truncate text-xs text-muted">{task.description}</p>}</div>
-        <span className={`pill ${task.status === 'in_progress' ? 'text-accent' : task.status === 'done' ? 'text-emerald-700' : 'text-muted'}`}>{statusLabel[task.status]}</span>
+        <span className={`pill ${task.status === 'in_progress' ? 'text-accent' : task.status === 'done' ? 'text-emerald-700 dark:text-emerald-300' : 'text-muted'}`}>{statusLabel[task.status]}</span>
         <span className={`w-20 text-right font-mono text-xs tabular-nums ${active?.taskId === task.id ? 'font-semibold text-accent' : 'text-muted'}`}>{active?.taskId === task.id ? seconds(elapsed) : ''}</span>
         <button type="button" disabled={!!active && active.taskId !== task.id || task.status === 'done'} onClick={() => active?.taskId === task.id ? stop() : start(task)} className={`button min-w-20 py-2 text-xs ${active?.taskId === task.id ? 'button-primary' : ''}`}>{active?.taskId === task.id ? 'Stop' : 'Start'}</button>
         <IconButton label={`Edit ${task.title}`} onClick={() => setEditing(task)}><Pencil size={16} /></IconButton>
@@ -140,13 +140,16 @@ function Logs({ date, setDate, list }: { date: string; setDate: (date: string) =
     finally { setLoading(false) }
   }
   return <section><div className="mb-6 flex flex-wrap items-end justify-between gap-4"><div><h1 className="text-2xl font-bold">Time Logs</h1><p className="mt-1 text-sm text-muted">Review where your time went.</p></div><input type="date" className="field w-auto" value={date} onChange={event => setDate(event.target.value)} aria-label="Log date" /></div>
-    <div className="card overflow-x-auto p-3"><table className="w-full min-w-[620px] text-left text-sm"><thead className="text-muted"><tr>{['Task', 'Date', 'Start', 'End', 'Total time'].map(label => <th className="px-4 py-4 font-semibold" key={label}>{label}</th>)}</tr></thead><tbody>{logs.length ? logs.map(log => { const start = new Date(log.startedAt); return <tr className="border-t border-white/70" key={log.id}><td className="px-4 py-4 font-medium">{log.taskTitle}</td><td className="px-4 py-4 text-muted">{start.toLocaleDateString()}</td><td className="px-4 py-4 text-muted">{start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td><td className="px-4 py-4 text-muted">{log.endedAt ? new Date(log.endedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Running'}</td><td className="px-4 py-4 font-mono text-muted">{seconds(log.durationSeconds)}</td></tr> }) : <tr><td colSpan={5} className="px-4 py-10 text-center text-muted">{loading ? 'Loading…' : 'No time logs for this day.'}</td></tr>}</tbody></table></div>
-    {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
+    <div className="card overflow-x-auto p-3"><table className="w-full min-w-[620px] text-left text-sm"><thead className="text-muted"><tr>{['Task', 'Date', 'Start', 'End', 'Total time'].map(label => <th className="px-4 py-4 font-semibold" key={label}>{label}</th>)}</tr></thead><tbody>{logs.length ? logs.map(log => { const start = new Date(log.startedAt); return <tr className="border-t border-ink/10" key={log.id}><td className="px-4 py-4 font-medium">{log.taskTitle}</td><td className="px-4 py-4 text-muted">{start.toLocaleDateString()}</td><td className="px-4 py-4 text-muted">{start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td><td className="px-4 py-4 text-muted">{log.endedAt ? new Date(log.endedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Running'}</td><td className="px-4 py-4 font-mono text-muted">{seconds(log.durationSeconds)}</td></tr> }) : <tr><td colSpan={5} className="px-4 py-10 text-center text-muted">{loading ? 'Loading…' : 'No time logs for this day.'}</td></tr>}</tbody></table></div>
+    {error && <p role="alert" className="mt-4 text-sm text-red-700 dark:text-red-300">{error}</p>}
     {hasMore && <button type="button" className="button mt-5" disabled={loading} onClick={more}>{loading ? 'Loading…' : 'Load more'}</button>}
   </section>
 }
 
 export default function App() {
+  const [dark, setDark] = useState(() => localStorage.getItem('tracker-theme') === 'dark')
+  useLayoutEffect(() => { document.documentElement.classList.toggle('dark', dark); localStorage.setItem('tracker-theme', dark ? 'dark' : 'light') }, [dark])
+  const themeButton = <IconButton label={dark ? 'Use light theme' : 'Use dark theme'} onClick={() => setDark(!dark)}>{dark ? <Sun size={17} /> : <Moon size={17} />}</IconButton>
   const [session, setSession] = useState<Session | null>(() => { try { return JSON.parse(localStorage.getItem('tracker-session') || 'null') as Session | null } catch { return null } })
   const [view, setView] = useState<View>('tasks')
   const [tasks, setTasks] = useState<Task[]>([])
@@ -184,11 +187,11 @@ export default function App() {
   }, [date, call])
   const action = async (work: () => Promise<unknown>) => { try { setError(''); await work(); await refresh() } catch (cause) { setError((cause as Error).message) } }
   const elapsed = active ? (tick + serverOffset - new Date(active.startedAt).getTime()) / 1000 : 0
-  if (!session) return <Auth onSuccess={value => { localStorage.setItem('tracker-session', JSON.stringify(value)); setSession(value) }} />
+  if (!session) return <Auth themeButton={themeButton} onSuccess={value => { localStorage.setItem('tracker-session', JSON.stringify(value)); setSession(value) }} />
   return <div className="min-h-screen p-3 sm:p-6 lg:p-10"><div className="card mx-auto min-h-[min(750px,calc(100vh-80px))] max-w-7xl overflow-hidden">
-    <header className="flex h-16 items-center justify-between border-b border-white/60 px-5 sm:px-7"><div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400" /><span className="h-3 w-3 rounded-full bg-amber-400" /><span className="h-3 w-3 rounded-full bg-emerald-400" /></div><strong className="text-sm tracking-tight">Task and Time Tracker</strong><div className="flex items-center gap-2"><span className="hidden text-xs text-muted sm:inline">{session.user.name}</span><IconButton label="Log out" onClick={logout}><LogOut size={17} /></IconButton></div></header>
-    <div className="flex flex-col md:min-h-[680px] md:flex-row"><nav aria-label="Main navigation" className="flex gap-1 border-b border-white/60 p-3 md:w-52 md:shrink-0 md:flex-col md:border-b-0 md:border-r md:p-5">{([['tasks', CheckSquare, 'Tasks'], ['logs', Clock3, 'Time Logs'], ['summary', BarChart3, 'Summary']] as const).map(([key, Icon, label]) => <button key={key} onClick={() => setView(key)} className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold md:flex-none md:justify-start ${view === key ? 'bg-accent text-white shadow-raised' : 'text-muted hover:text-ink'}`}><Icon size={17} />{label}</button>)}</nav>
-      <main className="min-w-0 flex-1 p-5 sm:p-8 lg:p-10">{error && <div role="alert" className="mb-5 flex items-center justify-between rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800">{error}<button onClick={() => setError('')} aria-label="Dismiss error"><X size={16} /></button></div>}
+    <header className="flex h-16 items-center justify-between border-b border-ink/10 px-5 sm:px-7"><div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400" /><span className="h-3 w-3 rounded-full bg-amber-400" /><span className="h-3 w-3 rounded-full bg-emerald-400" /></div><strong className="text-sm tracking-tight">Task and Time Tracker</strong><div className="flex items-center gap-2"><span className="hidden text-xs text-muted sm:inline">{session.user.name}</span>{themeButton}<IconButton label="Log out" onClick={logout}><LogOut size={17} /></IconButton></div></header>
+    <div className="flex flex-col md:min-h-[680px] md:flex-row"><nav aria-label="Main navigation" className="flex gap-1 border-b border-ink/10 p-3 md:w-52 md:shrink-0 md:flex-col md:border-b-0 md:border-r md:p-5">{([['tasks', CheckSquare, 'Tasks'], ['logs', Clock3, 'Time Logs'], ['summary', BarChart3, 'Summary']] as const).map(([key, Icon, label]) => <button key={key} onClick={() => setView(key)} className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-semibold md:flex-none md:justify-start ${view === key ? 'bg-action text-white shadow-raised' : 'text-muted hover:text-ink'}`}><Icon size={17} />{label}</button>)}</nav>
+      <main className="min-w-0 flex-1 p-5 sm:p-8 lg:p-10">{error && <div role="alert" className="mb-5 flex items-center justify-between rounded-xl bg-red-100 px-4 py-3 text-sm text-red-800 dark:bg-red-950 dark:text-red-200">{error}<button onClick={() => setError('')} aria-label="Dismiss error"><X size={16} /></button></div>}
         {view === 'tasks' && <Tasks tasks={tasks} active={active} elapsed={elapsed} create={async (title, description) => { await call('/tasks', json('POST', { title, description })); await refresh() }} update={async (task, values) => { await call(`/tasks/${task.id}`, json('PATCH', values)); await refresh() }} remove={task => action(() => call(`/tasks/${task.id}`, { method: 'DELETE' }))} start={task => action(() => call(`/tasks/${task.id}/timer/start`, { method: 'POST' }))} stop={() => action(() => call('/timer/stop', { method: 'POST' }))} />}
         {view === 'logs' && <Logs date={date} setDate={setDate} list={listLogs} />}
         {view === 'summary' && <SummaryView summary={summary} tasks={tasks} date={date} setDate={setDate} />}

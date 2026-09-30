@@ -3,6 +3,25 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --surface: 232 238 245;
+    --ink: 37 49 78;
+    --muted: 105 121 149;
+    --accent: 46 102 232;
+    --action: 46 102 232;
+    --shadow-raised: 7px 7px 15px #c5cfda, -7px -7px 15px #ffffff;
+    --shadow-inset: inset 4px 4px 8px #cbd4df, inset -4px -4px 8px #ffffff;
+  }
+  .dark {
+    color-scheme: dark;
+    --surface: 35 43 59;
+    --ink: 235 241 250;
+    --muted: 169 183 204;
+    --accent: 120 164 255;
+    --action: 46 102 232;
+    --shadow-raised: 7px 7px 15px #161d2b, -7px -7px 15px #303c50;
+    --shadow-inset: inset 4px 4px 8px #182131, inset -4px -4px 8px #334056;
+  }
   body { @apply m-0 bg-surface text-ink antialiased; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
   button, input, textarea, select { font: inherit; }
   button { @apply cursor-pointer; }
@@ -12,6 +31,6 @@
   .card { @apply rounded-3xl bg-surface shadow-raised; }
   .field { @apply w-full rounded-xl border-0 bg-surface px-4 py-3 text-ink shadow-inset outline-none placeholder:text-muted/70 focus:ring-2 focus:ring-accent/40; }
   .button { @apply inline-flex items-center justify-center gap-2 rounded-xl bg-surface px-4 py-2.5 font-semibold text-ink shadow-raised transition active:shadow-inset disabled:cursor-not-allowed disabled:opacity-50; }
-  .button-primary { @apply bg-accent text-white shadow-raised hover:bg-blue-700; }
+  .button-primary { @apply bg-action text-white shadow-raised hover:brightness-110; }
   .pill { @apply inline-flex items-center rounded-full bg-surface px-3 py-1 text-xs font-semibold shadow-inset; }
 }
