@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply m-0 bg-surface text-ink antialiased; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+  button, input, textarea, select { font: inherit; }
+  button { @apply cursor-pointer; }
+}
+
+@layer components {
+  .card { @apply rounded-3xl bg-surface shadow-raised; }
+  .field { @apply w-full rounded-xl border-0 bg-surface px-4 py-3 text-ink shadow-inset outline-none placeholder:text-muted/70 focus:ring-2 focus:ring-accent/40; }
+  .button { @apply inline-flex items-center justify-center gap-2 rounded-xl bg-surface px-4 py-2.5 font-semibold text-ink shadow-raised transition active:shadow-inset disabled:cursor-not-allowed disabled:opacity-50; }
+  .button-primary { @apply bg-accent text-white shadow-raised hover:bg-blue-700; }
+  .pill { @apply inline-flex items-center rounded-full bg-surface px-3 py-1 text-xs font-semibold shadow-inset; }
+}
