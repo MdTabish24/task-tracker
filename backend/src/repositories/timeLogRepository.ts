@@ -27,6 +27,25 @@ export async function stopActive(userId: string) {
   return rows[0];
 }
 
+// Logs are clipped to [from, to]; a running timer counts up to now().
+export async function sumSecondsByTask(userId: string, from: string, to: string) {
+  const { rows } = await pool.query<{ taskId: string; title: string; seconds: number }>(
+    `SELECT t.id AS "taskId", t.title,
+            round(sum(extract(epoch FROM
+              least(coalesce(l.ended_at, now()), $3::timestamptz) - greatest(l.started_at, $2::timestamptz)
+            )))::int AS seconds
+       FROM time_logs l
+       JOIN tasks t ON t.id = l.task_id
+      WHERE l.user_id = $1
+        AND l.started_at < $3::timestamptz
+        AND coalesce(l.ended_at, now()) > $2::timestamptz
+      GROUP BY t.id, t.title
+      ORDER BY seconds DESC`,
+    [userId, from, to],
+  );
+  return rows;
+}
+
 // now() comes from the DB so elapsed time uses the same clock as started_at.
 export async function findActive(userId: string) {
   const { rows } = await pool.query<TimeLog & { now: Date }>(

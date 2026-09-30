@@ -12,7 +12,7 @@ Each step is one commit.
 - [x] 4. Auth: signup, login, `me`, JWT middleware, rate limiting, helmet, CORS allowlist
 - [x] 5. Tasks: create, list, get, update, delete (user-scoped)
 - [x] 6. Timer: start, stop, active (one per user)
-- [ ] 7. Daily summary
+- [x] 7. Daily summary
 - [ ] 8. AI task suggestion endpoint
 
 **Frontend** (after the UI reference image is provided)

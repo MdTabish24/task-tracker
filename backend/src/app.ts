@@ -5,6 +5,7 @@ import { config } from "./config";
 import { authenticate } from "./middleware/authenticate";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import { authRoutes } from "./routes/authRoutes";
+import { summaryRoutes } from "./routes/summaryRoutes";
 import { taskRoutes } from "./routes/taskRoutes";
 import { timerRoutes } from "./routes/timerRoutes";
 
@@ -20,6 +21,7 @@ app.get("/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", authenticate, taskRoutes);
 app.use("/api/timer", authenticate, timerRoutes);
+app.use("/api/summary", authenticate, summaryRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
