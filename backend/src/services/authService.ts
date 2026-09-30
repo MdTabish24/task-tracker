@@ -1,11 +1,9 @@
-import { DatabaseError } from "pg";
+import { isUniqueViolation } from "../db";
 import { AppError } from "../errors";
 import * as userRepository from "../repositories/userRepository";
 import type { LoginInput, SignupInput } from "../schemas/auth";
 import { signToken } from "../utils/jwt";
 import { hashPassword, verifyPassword } from "../utils/password";
-
-const UNIQUE_VIOLATION = "23505";
 
 export async function signup({ name, email, password }: SignupInput) {
   const passwordHash = await hashPassword(password);
@@ -13,10 +11,7 @@ export async function signup({ name, email, password }: SignupInput) {
     const user = await userRepository.create(name, email, passwordHash);
     return { token: signToken(user.id), user };
   } catch (err) {
-    if (err instanceof DatabaseError && err.code === UNIQUE_VIOLATION) {
-      throw new AppError(409, "Email is already registered");
-    }
-    throw err;
+    throw isUniqueViolation(err) ? new AppError(409, "Email is already registered") : err;
   }
 }
 
