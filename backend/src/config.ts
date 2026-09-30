@@ -6,6 +6,7 @@ const schema = z.object({
   DATABASE_URL: z.url(),
   JWT_SECRET: z.string().min(32),
   JWT_EXPIRES_IN_SECONDS: z.coerce.number().int().positive().default(3600),
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
   CORS_ORIGINS: z.string().transform((list) => list.split(",").map((origin) => origin.trim())),
 });
 

@@ -40,3 +40,11 @@ describe("tasks", () => {
     expect((await api().get(url).set(alice.auth)).body.title).toBe("Private");
   });
 });
+
+describe("task suggestions", () => {
+  it("requires authentication and a non-empty input", async () => {
+    const { auth } = await signup();
+    expect((await api().post("/api/tasks/suggest").send({ input: "call designer" })).status).toBe(401);
+    expect((await api().post("/api/tasks/suggest").set(auth).send({ input: "  " })).status).toBe(400);
+  });
+});

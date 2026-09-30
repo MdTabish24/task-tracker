@@ -12,6 +12,7 @@
     "seed": "tsx --env-file=.env src/db/seed.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",

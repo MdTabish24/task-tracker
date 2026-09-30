@@ -13,7 +13,7 @@ Each step is one commit.
 - [x] 5. Tasks: create, list, get, update, delete (user-scoped)
 - [x] 6. Timer: start, stop, active (one per user)
 - [x] 7. Daily summary
-- [ ] 8. AI task suggestion endpoint
+- [x] 8. AI task suggestion endpoint
 
 **Frontend** (after the UI reference image is provided)
 - [x] 9. Scaffold `frontend/`, API client, auth context, protected routes
