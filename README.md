@@ -1,11 +1,19 @@
 # Task Tracker
 
-A task and time tracking app: create and manage tasks, run a real-time timer per task, browse time logs, and see a daily productivity summary.
+[![CI/CD](https://github.com/MdTabish24/task-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/MdTabish24/task-tracker/actions/workflows/ci.yml)
 
-- **App:** https://140-245-9-202.sslip.io:8443/
-- **API:** https://140-245-9-202.sslip.io:8443/api (health check: `/health`)
+A responsive task and time tracker with private workspaces, refresh-safe timers, time logs and daily summaries.
+
+**[Open the live app](https://140-245-9-202.sslip.io:8443/)** · [API health](https://140-245-9-202.sslip.io:8443/health)
 
 **Test account:** `test@example.com` / `password123`
+
+## What it does
+
+- Sign up, log in and manage only your own tasks and time logs.
+- Create, edit and delete tasks; start or stop one timer at a time. Elapsed time survives refreshes.
+- Browse individual time logs and see daily totals by task.
+- Switch between light and dark neumorphic themes on desktop or mobile.
 
 ## Tech stack
 
@@ -24,7 +32,7 @@ A task and time tracking app: create and manage tasks, run a real-time timer per
 
 ## Local setup
 
-Requirements: Node.js 20+ and Docker (for Postgres).
+Requirements: Node.js 20+ and Docker (for PostgreSQL). Run the backend and frontend commands in separate terminals.
 
 ```bash
 # Postgres (dev and test databases)
@@ -34,14 +42,14 @@ docker exec task-tracker-db psql -U postgres -c "CREATE DATABASE task_tracker_te
 # Backend (http://localhost:3000)
 cd backend
 cp .env.example .env        # then set JWT_SECRET to 32+ random characters
-npm install
+npm ci
 npm run migrate
 npm run seed                # creates test@example.com / password123
 npm run dev
 
 # Frontend (http://localhost:5173, proxies /api to the backend)
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -90,3 +98,7 @@ The app and API are served from one origin on an Oracle Cloud VPS.
 - **API:** `task-tracker-api` systemd service runs the built Node server with `NODE_ENV=production`. Migrations are applied separately during deployment; Nginx forwards the client IP for auth rate limiting.
 - **Database:** PostgreSQL in a Docker container with the `unless-stopped` restart policy.
 - Nginx, the API service and Docker are enabled at boot.
+
+## CI/CD
+
+[GitHub Actions](.github/workflows/ci.yml) runs backend typecheck, 17 API tests against an isolated PostgreSQL service, and both production builds on every pull request and push. A passing push to `main` runs the [VPS deploy script](deploy/vps-deploy.sh): install locked dependencies, build, apply migrations, restart the API and check the live app. Deployment uses a restricted SSH key stored in GitHub Actions secrets; database and JWT secrets stay on the VPS.
