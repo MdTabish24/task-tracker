@@ -8,7 +8,7 @@ Each step is one commit.
 **Backend**
 - [x] 1. Scaffold `backend/`: TypeScript strict, Express, env config (Zod), health route, `.gitignore`, `.env.example`
 - [x] 2. Postgres connection + SQL migrations (users, tasks, time_logs) + migrate runner + seed script
-- [ ] 3. Central error handler (`AppError`) + Zod validation middleware
+- [x] 3. Central error handler (`AppError`) + Zod validation middleware
 - [ ] 4. Auth: signup, login, `me`, JWT middleware, rate limiting, helmet, CORS allowlist
 - [ ] 5. Tasks: create, list, get, update, delete (user-scoped)
 - [ ] 6. Timer: start, stop, active (one per user)
