@@ -16,12 +16,12 @@ Each step is one commit.
 - [ ] 8. AI task suggestion endpoint
 
 **Frontend** (after the UI reference image is provided)
-- [ ] 9. Scaffold `frontend/`, API client, auth context, protected routes
-- [ ] 10. Signup / login / logout screens
-- [ ] 11. Task list + create (with AI suggestion) + edit
-- [ ] 12. Timer UI (live tick from server `startedAt`)
-- [ ] 13. Daily summary view
-- [ ] 14. Polish to match the reference design
+- [x] 9. Scaffold `frontend/`, API client, auth context, protected routes
+- [x] 10. Signup / login / logout screens
+- [x] 11. Task list + create (with AI suggestion) + edit
+- [x] 12. Timer UI (live tick from server `startedAt`)
+- [x] 13. Daily summary view
+- [x] 14. Polish to match the reference design
 
 **Ship**
 - [ ] 15. Deploy DB, backend, frontend
