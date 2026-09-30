@@ -87,6 +87,6 @@ All routes are under `/api` and need `Authorization: Bearer <token>` except sign
 The app and API are served from one origin on an Oracle Cloud VPS.
 
 - **Nginx** terminates HTTPS (Let's Encrypt, auto-renewed by `certbot-renew.timer`), serves the frontend build and proxies `/api` to the API.
-- **API:** `task-tracker-api` systemd service running `npm start`, which applies pending migrations and then starts the server with `NODE_ENV=production` (one trusted proxy hop, so rate limiting sees real client IPs).
+- **API:** `task-tracker-api` systemd service runs the built Node server with `NODE_ENV=production`. Migrations are applied separately during deployment; Nginx forwards the client IP for auth rate limiting.
 - **Database:** PostgreSQL in a Docker container with the `unless-stopped` restart policy.
 - Nginx, the API service and Docker are enabled at boot.
