@@ -69,6 +69,7 @@ function Auth({ onSuccess, themeButton }: { onSuccess: (session: Session) => voi
       {pendingEmail ? <form onSubmit={verify} className="mt-9 space-y-4">
         <input className="field text-center tracking-widest" name="code" aria-label="Verification code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} placeholder="6-digit code" required />
         {message && <p className="text-sm text-muted">{message}</p>}
+        <p className="text-sm text-muted">Check your inbox and Spam folder for the code. It expires in 10 minutes.</p>
         {error && <p role="alert" className="text-sm text-red-700 dark:text-red-300">{error}</p>}
         <button disabled={busy} className="button button-primary w-full">Verify account</button>
         <div className="flex justify-between text-sm"><button type="button" disabled={busy} className="text-accent" onClick={() => { sessionStorage.removeItem('pending-email'); setPendingEmail(''); setMode('login'); setError('') }}>Back to login</button><button type="button" disabled={busy} className="text-accent" onClick={() => void resend()}>Resend code</button></div>
